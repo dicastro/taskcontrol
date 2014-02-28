@@ -36,27 +36,27 @@ public class UsersController {
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(value = HttpStatus.CREATED)
 	public void createUser(@RequestBody User user) {
-		userService.create(user.getUsername(), user.getPassword());
+		userService.create(user.getUsername(), user.getPassword(), user.getEmail());
 	}
 	
-	@RequestMapping(value = "/{userId}/controls/{controlId}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/{username}/controls/{controlName}", method = RequestMethod.PUT)
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@ResponseBody
-	public void addUserControl(@PathVariable("userId") Long userId, @PathVariable("controlId") Long controlId) {
-		userService.addUserControl(userId, controlId);
+	public void addUserControl(@PathVariable("username") String username, @PathVariable("controlName") String controlName) {
+		userService.addUserControl(username, controlName);
 	}
 	
-	@RequestMapping(value = "/{userId}/controls/{controlId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{username}/controls/{controlName}", method = RequestMethod.DELETE)
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	@ResponseBody
-	public void removeUserControl(@PathVariable("userId") Long userId, @PathVariable("controlId") Long controlId) {
-		userService.removeUserControl(userId, controlId);
+	public void removeUserControl(@PathVariable("userName") String username, @PathVariable("controlName") String controlName) {
+		userService.removeUserControl(username, controlName);
 	}
 	
-	@RequestMapping(value = "/{userId}/controls", method = RequestMethod.GET)
+	@RequestMapping(value = "/{username}/controls", method = RequestMethod.GET)
 	@ResponseStatus(value = HttpStatus.OK)
 	@ResponseBody
-	public List<Control> getUserControls(@PathVariable("userId") Long userId) {
-		return controlService.listUserControls(userId);
+	public List<Control> getUserControls(@PathVariable("username") String username) {
+		return controlService.listUserControls(username);
 	}
 }

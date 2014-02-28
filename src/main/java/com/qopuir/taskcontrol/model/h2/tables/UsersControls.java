@@ -11,7 +11,7 @@ package com.qopuir.taskcontrol.model.h2.tables;
 @java.lang.SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class UsersControls extends org.jooq.impl.TableImpl<com.qopuir.taskcontrol.model.h2.tables.records.UsersControlsRecord> {
 
-	private static final long serialVersionUID = 1714548722;
+	private static final long serialVersionUID = 1202613431;
 
 	/**
 	 * The singleton instance of <code>PUBLIC.USERS_CONTROLS</code>
@@ -27,14 +27,14 @@ public class UsersControls extends org.jooq.impl.TableImpl<com.qopuir.taskcontro
 	}
 
 	/**
-	 * The column <code>PUBLIC.USERS_CONTROLS.USER_ID</code>.
+	 * The column <code>PUBLIC.USERS_CONTROLS.USER_USERNAME</code>.
 	 */
-	public final org.jooq.TableField<com.qopuir.taskcontrol.model.h2.tables.records.UsersControlsRecord, java.lang.Long> USER_ID = createField("USER_ID", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+	public final org.jooq.TableField<com.qopuir.taskcontrol.model.h2.tables.records.UsersControlsRecord, java.lang.String> USER_USERNAME = createField("USER_USERNAME", org.jooq.impl.SQLDataType.VARCHAR.length(256).nullable(false), this, "");
 
 	/**
-	 * The column <code>PUBLIC.USERS_CONTROLS.CONTROL_ID</code>.
+	 * The column <code>PUBLIC.USERS_CONTROLS.CONTROL_NAME</code>.
 	 */
-	public final org.jooq.TableField<com.qopuir.taskcontrol.model.h2.tables.records.UsersControlsRecord, java.lang.Long> CONTROL_ID = createField("CONTROL_ID", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+	public final org.jooq.TableField<com.qopuir.taskcontrol.model.h2.tables.records.UsersControlsRecord, java.lang.String> CONTROL_NAME = createField("CONTROL_NAME", org.jooq.impl.SQLDataType.VARCHAR.length(100).nullable(false), this, "");
 
 	/**
 	 * Create a <code>PUBLIC.USERS_CONTROLS</code> table reference
@@ -72,6 +72,14 @@ public class UsersControls extends org.jooq.impl.TableImpl<com.qopuir.taskcontro
 	@Override
 	public java.util.List<org.jooq.UniqueKey<com.qopuir.taskcontrol.model.h2.tables.records.UsersControlsRecord>> getKeys() {
 		return java.util.Arrays.<org.jooq.UniqueKey<com.qopuir.taskcontrol.model.h2.tables.records.UsersControlsRecord>>asList(com.qopuir.taskcontrol.model.h2.Keys.CONSTRAINT_5);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public java.util.List<org.jooq.ForeignKey<com.qopuir.taskcontrol.model.h2.tables.records.UsersControlsRecord, ?>> getReferences() {
+		return java.util.Arrays.<org.jooq.ForeignKey<com.qopuir.taskcontrol.model.h2.tables.records.UsersControlsRecord, ?>>asList(com.qopuir.taskcontrol.model.h2.Keys.CONSTRAINT_5D, com.qopuir.taskcontrol.model.h2.Keys.CONSTRAINT_5D5);
 	}
 
 	/**

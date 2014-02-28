@@ -11,7 +11,7 @@ public interface UserService {
      * Create a new user.
      */
     @Transactional
-    void create(String userName, String password);
+    void create(String userName, String password, String email);
     
     /**
      * Get list of users
@@ -23,17 +23,17 @@ public interface UserService {
      * Adds a control to a user
      */
     @Transactional
-    void addUserControl(Long userId, Long controlId);
+    void addUserControl(String username, String controlName);
 
     /**
      * Removes a user's control
      */
 	@Transactional
-	void removeUserControl(Long userId, Long controlId);
+	void removeUserControl(String username, String controlName);
 	
 	/**
 	 * Get list of control's users
 	 */
 	@Transactional(readOnly = true)
-	List<User> listControlUsers(Long controlId);
+	List<User> listControlUsers(String controlName);
 }

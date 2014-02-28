@@ -18,8 +18,6 @@ public class Keys {
 	// IDENTITY definitions
 	// -------------------------------------------------------------------------
 
-	public static final org.jooq.Identity<com.qopuir.taskcontrol.model.h2.tables.records.UsersRecord, java.lang.Long> IDENTITY_USERS = Identities0.IDENTITY_USERS;
-	public static final org.jooq.Identity<com.qopuir.taskcontrol.model.h2.tables.records.ControlsRecord, java.lang.Long> IDENTITY_CONTROLS = Identities0.IDENTITY_CONTROLS;
 
 	// -------------------------------------------------------------------------
 	// UNIQUE and PRIMARY KEY definitions
@@ -33,19 +31,21 @@ public class Keys {
 	// FOREIGN KEY definitions
 	// -------------------------------------------------------------------------
 
+	public static final org.jooq.ForeignKey<com.qopuir.taskcontrol.model.h2.tables.records.UsersControlsRecord, com.qopuir.taskcontrol.model.h2.tables.records.UsersRecord> CONSTRAINT_5D = ForeignKeys0.CONSTRAINT_5D;
+	public static final org.jooq.ForeignKey<com.qopuir.taskcontrol.model.h2.tables.records.UsersControlsRecord, com.qopuir.taskcontrol.model.h2.tables.records.ControlsRecord> CONSTRAINT_5D5 = ForeignKeys0.CONSTRAINT_5D5;
 
 	// -------------------------------------------------------------------------
 	// [#1459] distribute members to avoid static initialisers > 64kb
 	// -------------------------------------------------------------------------
 
-	private static class Identities0 extends org.jooq.impl.AbstractKeys {
-		public static org.jooq.Identity<com.qopuir.taskcontrol.model.h2.tables.records.UsersRecord, java.lang.Long> IDENTITY_USERS = createIdentity(com.qopuir.taskcontrol.model.h2.tables.Users.USERS, com.qopuir.taskcontrol.model.h2.tables.Users.USERS.ID);
-		public static org.jooq.Identity<com.qopuir.taskcontrol.model.h2.tables.records.ControlsRecord, java.lang.Long> IDENTITY_CONTROLS = createIdentity(com.qopuir.taskcontrol.model.h2.tables.Controls.CONTROLS, com.qopuir.taskcontrol.model.h2.tables.Controls.CONTROLS.ID);
+	private static class UniqueKeys0 extends org.jooq.impl.AbstractKeys {
+		public static final org.jooq.UniqueKey<com.qopuir.taskcontrol.model.h2.tables.records.UsersRecord> CONSTRAINT_4 = createUniqueKey(com.qopuir.taskcontrol.model.h2.tables.Users.USERS, com.qopuir.taskcontrol.model.h2.tables.Users.USERS.USERNAME);
+		public static final org.jooq.UniqueKey<com.qopuir.taskcontrol.model.h2.tables.records.ControlsRecord> CONSTRAINT_C = createUniqueKey(com.qopuir.taskcontrol.model.h2.tables.Controls.CONTROLS, com.qopuir.taskcontrol.model.h2.tables.Controls.CONTROLS.NAME);
+		public static final org.jooq.UniqueKey<com.qopuir.taskcontrol.model.h2.tables.records.UsersControlsRecord> CONSTRAINT_5 = createUniqueKey(com.qopuir.taskcontrol.model.h2.tables.UsersControls.USERS_CONTROLS, com.qopuir.taskcontrol.model.h2.tables.UsersControls.USERS_CONTROLS.USER_USERNAME, com.qopuir.taskcontrol.model.h2.tables.UsersControls.USERS_CONTROLS.CONTROL_NAME);
 	}
 
-	private static class UniqueKeys0 extends org.jooq.impl.AbstractKeys {
-		public static final org.jooq.UniqueKey<com.qopuir.taskcontrol.model.h2.tables.records.UsersRecord> CONSTRAINT_4 = createUniqueKey(com.qopuir.taskcontrol.model.h2.tables.Users.USERS, com.qopuir.taskcontrol.model.h2.tables.Users.USERS.ID);
-		public static final org.jooq.UniqueKey<com.qopuir.taskcontrol.model.h2.tables.records.ControlsRecord> CONSTRAINT_C = createUniqueKey(com.qopuir.taskcontrol.model.h2.tables.Controls.CONTROLS, com.qopuir.taskcontrol.model.h2.tables.Controls.CONTROLS.ID);
-		public static final org.jooq.UniqueKey<com.qopuir.taskcontrol.model.h2.tables.records.UsersControlsRecord> CONSTRAINT_5 = createUniqueKey(com.qopuir.taskcontrol.model.h2.tables.UsersControls.USERS_CONTROLS, com.qopuir.taskcontrol.model.h2.tables.UsersControls.USERS_CONTROLS.USER_ID, com.qopuir.taskcontrol.model.h2.tables.UsersControls.USERS_CONTROLS.CONTROL_ID);
+	private static class ForeignKeys0 extends org.jooq.impl.AbstractKeys {
+		public static final org.jooq.ForeignKey<com.qopuir.taskcontrol.model.h2.tables.records.UsersControlsRecord, com.qopuir.taskcontrol.model.h2.tables.records.UsersRecord> CONSTRAINT_5D = createForeignKey(com.qopuir.taskcontrol.model.h2.Keys.CONSTRAINT_4, com.qopuir.taskcontrol.model.h2.tables.UsersControls.USERS_CONTROLS, com.qopuir.taskcontrol.model.h2.tables.UsersControls.USERS_CONTROLS.USER_USERNAME);
+		public static final org.jooq.ForeignKey<com.qopuir.taskcontrol.model.h2.tables.records.UsersControlsRecord, com.qopuir.taskcontrol.model.h2.tables.records.ControlsRecord> CONSTRAINT_5D5 = createForeignKey(com.qopuir.taskcontrol.model.h2.Keys.CONSTRAINT_C, com.qopuir.taskcontrol.model.h2.tables.UsersControls.USERS_CONTROLS, com.qopuir.taskcontrol.model.h2.tables.UsersControls.USERS_CONTROLS.CONTROL_NAME);
 	}
 }

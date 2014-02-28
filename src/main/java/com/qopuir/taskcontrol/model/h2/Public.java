@@ -11,7 +11,7 @@ package com.qopuir.taskcontrol.model.h2;
 @java.lang.SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Public extends org.jooq.impl.SchemaImpl {
 
-	private static final long serialVersionUID = 73205631;
+	private static final long serialVersionUID = 161167984;
 
 	/**
 	 * The singleton instance of <code>PUBLIC</code>
@@ -23,19 +23,6 @@ public class Public extends org.jooq.impl.SchemaImpl {
 	 */
 	private Public() {
 		super("PUBLIC");
-	}
-
-	@Override
-	public final java.util.List<org.jooq.Sequence<?>> getSequences() {
-		java.util.List result = new java.util.ArrayList();
-		result.addAll(getSequences0());
-		return result;
-	}
-
-	private final java.util.List<org.jooq.Sequence<?>> getSequences0() {
-		return java.util.Arrays.<org.jooq.Sequence<?>>asList(
-			com.qopuir.taskcontrol.model.h2.Sequences.SYSTEM_SEQUENCE_1359A897_5690_43CD_9424_C2DD70AC7249,
-			com.qopuir.taskcontrol.model.h2.Sequences.SYSTEM_SEQUENCE_D675D4C4_45B4_4047_907C_8E4381550CB0);
 	}
 
 	@Override

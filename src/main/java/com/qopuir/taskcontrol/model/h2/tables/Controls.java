@@ -11,7 +11,7 @@ package com.qopuir.taskcontrol.model.h2.tables;
 @java.lang.SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Controls extends org.jooq.impl.TableImpl<com.qopuir.taskcontrol.model.h2.tables.records.ControlsRecord> {
 
-	private static final long serialVersionUID = -678607281;
+	private static final long serialVersionUID = 912858875;
 
 	/**
 	 * The singleton instance of <code>PUBLIC.CONTROLS</code>
@@ -27,14 +27,9 @@ public class Controls extends org.jooq.impl.TableImpl<com.qopuir.taskcontrol.mod
 	}
 
 	/**
-	 * The column <code>PUBLIC.CONTROLS.ID</code>.
-	 */
-	public final org.jooq.TableField<com.qopuir.taskcontrol.model.h2.tables.records.ControlsRecord, java.lang.Long> ID = createField("ID", org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaulted(true), this, "");
-
-	/**
 	 * The column <code>PUBLIC.CONTROLS.NAME</code>.
 	 */
-	public final org.jooq.TableField<com.qopuir.taskcontrol.model.h2.tables.records.ControlsRecord, java.lang.String> NAME = createField("NAME", org.jooq.impl.SQLDataType.VARCHAR.length(100), this, "");
+	public final org.jooq.TableField<com.qopuir.taskcontrol.model.h2.tables.records.ControlsRecord, java.lang.String> NAME = createField("NAME", org.jooq.impl.SQLDataType.VARCHAR.length(100).nullable(false), this, "");
 
 	/**
 	 * The column <code>PUBLIC.CONTROLS.DESCRIPTION</code>.
@@ -61,14 +56,6 @@ public class Controls extends org.jooq.impl.TableImpl<com.qopuir.taskcontrol.mod
 
 	private Controls(java.lang.String alias, org.jooq.Table<com.qopuir.taskcontrol.model.h2.tables.records.ControlsRecord> aliased, org.jooq.Field<?>[] parameters) {
 		super(alias, com.qopuir.taskcontrol.model.h2.Public.PUBLIC, aliased, parameters, "");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public org.jooq.Identity<com.qopuir.taskcontrol.model.h2.tables.records.ControlsRecord, java.lang.Long> getIdentity() {
-		return com.qopuir.taskcontrol.model.h2.Keys.IDENTITY_CONTROLS;
 	}
 
 	/**

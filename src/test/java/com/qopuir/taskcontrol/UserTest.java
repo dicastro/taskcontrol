@@ -27,13 +27,14 @@ public class UserTest {
 	
 	@Test
     public void testUserCreation() throws Exception {
-		userService.create("demo1", "demo1");
+		userService.create("demo1", "demo1", "demo1@controltask.com");
 		
 		List<User> result = userService.list();
 
         Assert.assertEquals(2, result.size());
               
         Assert.assertEquals(result.get(1).getUsername(), "demo1");
-        Assert.assertEquals(result.get(1).getPassword(), "demo1");
+        Assert.assertNull(result.get(1).getPassword());
+        Assert.assertEquals(result.get(1).getEmail(), "demo1@controltask.com");
     }
 }

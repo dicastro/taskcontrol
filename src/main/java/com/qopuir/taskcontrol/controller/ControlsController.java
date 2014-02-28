@@ -31,10 +31,10 @@ public class ControlsController {
 		return controlService.list();
 	}
 	
-	@RequestMapping(value = "/{controlId}/users", method = RequestMethod.GET)
+	@RequestMapping(value = "/{controlName}/users", method = RequestMethod.GET)
 	@ResponseStatus(value = HttpStatus.OK)
 	@ResponseBody
-	public List<User> getUserControls(@PathVariable("controlId") Long controlId) {
-		return userService.listControlUsers(controlId);
+	public List<User> getUserControls(@PathVariable("controlName") String controlName) {
+		return userService.listControlUsers(controlName);
 	}
 }

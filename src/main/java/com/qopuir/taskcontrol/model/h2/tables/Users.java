@@ -11,7 +11,7 @@ package com.qopuir.taskcontrol.model.h2.tables;
 @java.lang.SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Users extends org.jooq.impl.TableImpl<com.qopuir.taskcontrol.model.h2.tables.records.UsersRecord> {
 
-	private static final long serialVersionUID = 985655001;
+	private static final long serialVersionUID = 1463973163;
 
 	/**
 	 * The singleton instance of <code>PUBLIC.USERS</code>
@@ -27,14 +27,9 @@ public class Users extends org.jooq.impl.TableImpl<com.qopuir.taskcontrol.model.
 	}
 
 	/**
-	 * The column <code>PUBLIC.USERS.ID</code>.
-	 */
-	public final org.jooq.TableField<com.qopuir.taskcontrol.model.h2.tables.records.UsersRecord, java.lang.Long> ID = createField("ID", org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaulted(true), this, "");
-
-	/**
 	 * The column <code>PUBLIC.USERS.USERNAME</code>.
 	 */
-	public final org.jooq.TableField<com.qopuir.taskcontrol.model.h2.tables.records.UsersRecord, java.lang.String> USERNAME = createField("USERNAME", org.jooq.impl.SQLDataType.VARCHAR.length(256), this, "");
+	public final org.jooq.TableField<com.qopuir.taskcontrol.model.h2.tables.records.UsersRecord, java.lang.String> USERNAME = createField("USERNAME", org.jooq.impl.SQLDataType.VARCHAR.length(256).nullable(false), this, "");
 
 	/**
 	 * The column <code>PUBLIC.USERS.PASSWORD</code>.
@@ -66,14 +61,6 @@ public class Users extends org.jooq.impl.TableImpl<com.qopuir.taskcontrol.model.
 
 	private Users(java.lang.String alias, org.jooq.Table<com.qopuir.taskcontrol.model.h2.tables.records.UsersRecord> aliased, org.jooq.Field<?>[] parameters) {
 		super(alias, com.qopuir.taskcontrol.model.h2.Public.PUBLIC, aliased, parameters, "");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public org.jooq.Identity<com.qopuir.taskcontrol.model.h2.tables.records.UsersRecord, java.lang.Long> getIdentity() {
-		return com.qopuir.taskcontrol.model.h2.Keys.IDENTITY_USERS;
 	}
 
 	/**

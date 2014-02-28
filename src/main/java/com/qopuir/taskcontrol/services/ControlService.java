@@ -17,5 +17,5 @@ public interface ControlService {
      * Get list of controls of user
      */
     @Transactional(readOnly = true)
-    List<Control> listUserControls(Long userId);
+    List<Control> listUserControls(String username);
 }
