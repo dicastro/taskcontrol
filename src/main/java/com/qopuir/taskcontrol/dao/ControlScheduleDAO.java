@@ -12,7 +12,7 @@ public interface ControlScheduleDAO {
      * Create a control schedule
      */
     @Transactional
-    void create(Timestamp start, Timestamp end, String cron, String typeControl);
+    Long create(Timestamp start, Timestamp end, String cron, String typeControl);
     
     /**
      * Get list of control schedules
@@ -25,6 +25,18 @@ public interface ControlScheduleDAO {
      */
     @Transactional(readOnly = true)
 	ControlSchedule findOne(Long controlId);
+    
+    /**
+     * Get control schedules ready to be run
+     */
+    @Transactional(readOnly = true)
+    List<ControlSchedule> findReadyToRun();
+    
+    /**
+     * Get control schedules ready to be finished
+     */
+    @Transactional(readOnly = true)
+	List<ControlSchedule> findReadyToFinish();
     
     /**
      * Pause a control schedule

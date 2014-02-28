@@ -26,7 +26,7 @@ public class UserDAOTest {
     }
 	
 	@Test
-    public void testUserCreation() throws Exception {
+    public void testCreateUser() throws Exception {
 		userDAO.create("demo1", "demo1", "demo1@controltask.com");
 		
 		List<User> result = userDAO.list();

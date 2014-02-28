@@ -19,8 +19,8 @@ public class ControlScheduleServiceImpl implements ControlScheduleService {
 	
 	@Override
 	@Transactional
-	public void create(ControlSchedule controlSchedule) {
-		controlScheduleDAO.create(new Timestamp(controlSchedule.getStart().getMillis()), new Timestamp(controlSchedule.getEnd().getMillis()), controlSchedule.getCron(), controlSchedule.getType().toString());
+	public Long create(ControlSchedule controlSchedule) {
+		return controlScheduleDAO.create(new Timestamp(controlSchedule.getStart().getMillis()), new Timestamp(controlSchedule.getEnd().getMillis()), controlSchedule.getCron(), controlSchedule.getType().toString());
 	}
 
 	@Override
@@ -34,6 +34,18 @@ public class ControlScheduleServiceImpl implements ControlScheduleService {
 	public ControlSchedule findOne(Long controlId) {
 		return controlScheduleDAO.findOne(controlId);
 	}
+	
+	@Override
+    @Transactional(readOnly = true)
+    public List<ControlSchedule> findReadyToRun() {
+    	return controlScheduleDAO.findReadyToRun();
+    }
+	
+	@Override
+    @Transactional(readOnly = true)
+    public List<ControlSchedule> findReadyToFinish() {
+    	return controlScheduleDAO.findReadyToFinish();
+    }
 	
 	@Override
 	@Transactional
@@ -53,5 +65,15 @@ public class ControlScheduleServiceImpl implements ControlScheduleService {
 		if (controlSchedule != null && controlSchedule.getStatus() == ControlScheduleStatus.PAUSED) {
         	controlScheduleDAO.updateStatus(controlId, ControlScheduleStatus.RUNNING.toString());
     	}
+	}
+	
+	@Override
+	@Transactional
+	public void finish(Long controlId) {
+		ControlSchedule controlSchedule = controlScheduleDAO.findOne(controlId);
+		
+		if (controlSchedule != null && (controlSchedule.getStatus() == ControlScheduleStatus.RUNNING || controlSchedule.getStatus() == ControlScheduleStatus.PAUSED)) {
+			controlScheduleDAO.updateStatus(controlId, ControlScheduleStatus.FINISHED.toString());
+		}
 	}
 }

@@ -11,7 +11,7 @@ public interface ControlScheduleService {
      * Create a control schedule
      */
     @Transactional
-    void create(ControlSchedule controlSchedule);
+    Long create(ControlSchedule controlSchedule);
     
     /**
      * Get list of control schedules
@@ -26,6 +26,18 @@ public interface ControlScheduleService {
 	ControlSchedule findOne(Long controlId);
     
     /**
+     * Get control schedules pending
+     */
+    @Transactional(readOnly = true)
+    List<ControlSchedule> findReadyToRun();
+    
+    /**
+     * Get control schedules finished
+     */
+    @Transactional(readOnly = true)
+    List<ControlSchedule> findReadyToFinish();
+    
+    /**
      * Pause a control schedule
      */
     @Transactional
@@ -36,4 +48,10 @@ public interface ControlScheduleService {
      */
 	@Transactional
 	void resume(Long controlId);
+	
+	/**
+	 * Finish a control schedule
+	 */
+	@Transactional
+	void finish(Long controlId);
 }

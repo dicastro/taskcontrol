@@ -14,7 +14,7 @@ package com.qopuir.taskcontrol.model.h2;
 public class Sequences {
 
 	/**
-	 * The sequence <code>PUBLIC.SYSTEM_SEQUENCE_4AF05C96_C893_481A_B819_CA9C3595FD08</code>
+	 * The sequence <code>PUBLIC.SYSTEM_SEQUENCE_A0F1C685_BA14_4F28_81E0_A7644A61077A</code>
 	 */
-	public static final org.jooq.Sequence<java.lang.Long> SYSTEM_SEQUENCE_4AF05C96_C893_481A_B819_CA9C3595FD08 = new org.jooq.impl.SequenceImpl<java.lang.Long>("SYSTEM_SEQUENCE_4AF05C96_C893_481A_B819_CA9C3595FD08", com.qopuir.taskcontrol.model.h2.Public.PUBLIC, org.jooq.impl.SQLDataType.BIGINT);
+	public static final org.jooq.Sequence<java.lang.Long> SYSTEM_SEQUENCE_A0F1C685_BA14_4F28_81E0_A7644A61077A = new org.jooq.impl.SequenceImpl<java.lang.Long>("SYSTEM_SEQUENCE_A0F1C685_BA14_4F28_81E0_A7644A61077A", com.qopuir.taskcontrol.model.h2.Public.PUBLIC, org.jooq.impl.SQLDataType.BIGINT);
 }
