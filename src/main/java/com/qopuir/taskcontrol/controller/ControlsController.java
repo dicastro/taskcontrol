@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qopuir.taskcontrol.model.Control;
 import com.qopuir.taskcontrol.model.User;
-import com.qopuir.taskcontrol.services.ControlService;
-import com.qopuir.taskcontrol.services.UserService;
+import com.qopuir.taskcontrol.service.ControlService;
+import com.qopuir.taskcontrol.service.UserService;
 
 @Controller
 @RequestMapping("/controls")

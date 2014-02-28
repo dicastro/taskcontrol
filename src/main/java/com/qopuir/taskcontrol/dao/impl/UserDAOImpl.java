@@ -1,4 +1,4 @@
-package com.qopuir.taskcontrol.services.impl;
+package com.qopuir.taskcontrol.dao.impl;
 
 import java.util.List;
 
@@ -6,14 +6,16 @@ import org.jooq.DSLContext;
 import org.jooq.Record2;
 import org.jooq.RecordMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.qopuir.taskcontrol.dao.UserDAO;
 import com.qopuir.taskcontrol.model.User;
 import com.qopuir.taskcontrol.model.h2.Tables;
 import com.qopuir.taskcontrol.model.h2.tables.Users;
-import com.qopuir.taskcontrol.services.UserService;
 
-public class UserServiceImpl implements UserService {
+@Repository
+public class UserDAOImpl implements UserDAO {
 	@Autowired
     DSLContext dsl;
 	
@@ -41,13 +43,13 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	@Transactional
-	public void addUserControl(String username, String controlName) {
+	public void addControl(String username, String controlName) {
         dsl.insertInto(Tables.USERS_CONTROLS.asTable()).set(Tables.USERS_CONTROLS.USER_USERNAME, username).set(Tables.USERS_CONTROLS.CONTROL_NAME, controlName).execute();
 	}
 	
 	@Override
 	@Transactional
-	public void removeUserControl(String username, String controlName) {
+	public void removeControl(String username, String controlName) {
         dsl.delete(Tables.USERS_CONTROLS.asTable()).where(Tables.USERS_CONTROLS.USER_USERNAME.eq(username)).and(Tables.USERS_CONTROLS.CONTROL_NAME.eq(controlName)).execute();
 	}
 	

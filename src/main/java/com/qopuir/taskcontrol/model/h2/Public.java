@@ -11,7 +11,7 @@ package com.qopuir.taskcontrol.model.h2;
 @java.lang.SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Public extends org.jooq.impl.SchemaImpl {
 
-	private static final long serialVersionUID = 161167984;
+	private static final long serialVersionUID = -1002735274;
 
 	/**
 	 * The singleton instance of <code>PUBLIC</code>
@@ -26,6 +26,18 @@ public class Public extends org.jooq.impl.SchemaImpl {
 	}
 
 	@Override
+	public final java.util.List<org.jooq.Sequence<?>> getSequences() {
+		java.util.List result = new java.util.ArrayList();
+		result.addAll(getSequences0());
+		return result;
+	}
+
+	private final java.util.List<org.jooq.Sequence<?>> getSequences0() {
+		return java.util.Arrays.<org.jooq.Sequence<?>>asList(
+			com.qopuir.taskcontrol.model.h2.Sequences.SYSTEM_SEQUENCE_4AF05C96_C893_481A_B819_CA9C3595FD08);
+	}
+
+	@Override
 	public final java.util.List<org.jooq.Table<?>> getTables() {
 		java.util.List result = new java.util.ArrayList();
 		result.addAll(getTables0());
@@ -36,6 +48,7 @@ public class Public extends org.jooq.impl.SchemaImpl {
 		return java.util.Arrays.<org.jooq.Table<?>>asList(
 			com.qopuir.taskcontrol.model.h2.tables.Users.USERS,
 			com.qopuir.taskcontrol.model.h2.tables.Controls.CONTROLS,
-			com.qopuir.taskcontrol.model.h2.tables.UsersControls.USERS_CONTROLS);
+			com.qopuir.taskcontrol.model.h2.tables.UsersControls.USERS_CONTROLS,
+			com.qopuir.taskcontrol.model.h2.tables.ControlsSchedule.CONTROLS_SCHEDULE);
 	}
 }

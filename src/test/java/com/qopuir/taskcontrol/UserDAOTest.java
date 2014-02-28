@@ -9,27 +9,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.qopuir.taskcontrol.dao.UserDAO;
 import com.qopuir.taskcontrol.model.User;
-import com.qopuir.taskcontrol.services.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/database-context.xml"})
-public class UserTest {
+public class UserDAOTest {
 	@Autowired
-	UserService userService;
+	UserDAO userDAO;
 	
 	@Test
     public void testList() throws Exception {
-        List<User> result = userService.list();
+        List<User> result = userDAO.list();
 
         Assert.assertEquals(1, result.size());
     }
 	
 	@Test
     public void testUserCreation() throws Exception {
-		userService.create("demo1", "demo1", "demo1@controltask.com");
+		userDAO.create("demo1", "demo1", "demo1@controltask.com");
 		
-		List<User> result = userService.list();
+		List<User> result = userDAO.list();
 
         Assert.assertEquals(2, result.size());
               

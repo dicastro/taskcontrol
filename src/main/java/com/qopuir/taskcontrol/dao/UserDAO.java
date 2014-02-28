@@ -1,4 +1,4 @@
-package com.qopuir.taskcontrol.services;
+package com.qopuir.taskcontrol.dao;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qopuir.taskcontrol.model.User;
 
-public interface UserService {
+public interface UserDAO {
 	/**
      * Create a new user.
      */
@@ -23,13 +23,13 @@ public interface UserService {
      * Adds a control to a user
      */
     @Transactional
-    void addUserControl(String username, String controlName);
+    void addControl(String username, String controlName);
 
     /**
      * Removes a user's control
      */
 	@Transactional
-	void removeUserControl(String username, String controlName);
+	void removeControl(String username, String controlName);
 	
 	/**
 	 * Get list of control's users

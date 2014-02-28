@@ -1,4 +1,4 @@
-package com.qopuir.taskcontrol.services.impl;
+package com.qopuir.taskcontrol.dao.impl;
 
 import java.util.List;
 
@@ -6,14 +6,16 @@ import org.jooq.DSLContext;
 import org.jooq.Record2;
 import org.jooq.RecordMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.qopuir.taskcontrol.dao.ControlDAO;
 import com.qopuir.taskcontrol.model.Control;
 import com.qopuir.taskcontrol.model.h2.Tables;
 import com.qopuir.taskcontrol.model.h2.tables.Controls;
-import com.qopuir.taskcontrol.services.ControlService;
 
-public class ControlServiceImpl implements ControlService {
+@Repository
+public class ControlDAOImpl implements ControlDAO {
 	@Autowired
     DSLContext dsl;
 	

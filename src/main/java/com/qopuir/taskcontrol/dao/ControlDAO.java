@@ -1,4 +1,4 @@
-package com.qopuir.taskcontrol.services;
+package com.qopuir.taskcontrol.dao;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qopuir.taskcontrol.model.Control;
 
-public interface ControlService {
+public interface ControlDAO {
     /**
      * Get list of controls
      */

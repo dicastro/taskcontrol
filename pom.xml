@@ -76,6 +76,13 @@
 			<version>2.3.1</version>
 		</dependency>
 
+		<!-- utils -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.3</version>
+		</dependency>
+
 		<!-- logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>

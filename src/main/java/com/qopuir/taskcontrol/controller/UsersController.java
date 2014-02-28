@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qopuir.taskcontrol.model.Control;
 import com.qopuir.taskcontrol.model.User;
-import com.qopuir.taskcontrol.services.ControlService;
-import com.qopuir.taskcontrol.services.UserService;
+import com.qopuir.taskcontrol.service.ControlService;
+import com.qopuir.taskcontrol.service.UserService;
 
 @Controller
 @RequestMapping("/users")
@@ -36,21 +36,21 @@ public class UsersController {
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(value = HttpStatus.CREATED)
 	public void createUser(@RequestBody User user) {
-		userService.create(user.getUsername(), user.getPassword(), user.getEmail());
+		userService.create(user);
 	}
 	
 	@RequestMapping(value = "/{username}/controls/{controlName}", method = RequestMethod.PUT)
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@ResponseBody
 	public void addUserControl(@PathVariable("username") String username, @PathVariable("controlName") String controlName) {
-		userService.addUserControl(username, controlName);
+		userService.addControl(username, controlName);
 	}
 	
 	@RequestMapping(value = "/{username}/controls/{controlName}", method = RequestMethod.DELETE)
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	@ResponseBody
 	public void removeUserControl(@PathVariable("userName") String username, @PathVariable("controlName") String controlName) {
-		userService.removeUserControl(username, controlName);
+		userService.removeControl(username, controlName);
 	}
 	
 	@RequestMapping(value = "/{username}/controls", method = RequestMethod.GET)

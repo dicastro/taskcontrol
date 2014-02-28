@@ -27,4 +27,9 @@ public class Tables {
 	 * The table PUBLIC.USERS_CONTROLS
 	 */
 	public static final com.qopuir.taskcontrol.model.h2.tables.UsersControls USERS_CONTROLS = com.qopuir.taskcontrol.model.h2.tables.UsersControls.USERS_CONTROLS;
+
+	/**
+	 * The table PUBLIC.CONTROLS_SCHEDULE
+	 */
+	public static final com.qopuir.taskcontrol.model.h2.tables.ControlsSchedule CONTROLS_SCHEDULE = com.qopuir.taskcontrol.model.h2.tables.ControlsSchedule.CONTROLS_SCHEDULE;
 }
