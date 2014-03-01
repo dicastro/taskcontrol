@@ -20,7 +20,7 @@ public class ControlScheduleServiceImpl implements ControlScheduleService {
 	@Override
 	@Transactional
 	public Long create(ControlSchedule controlSchedule) {
-		return controlScheduleDAO.create(new Timestamp(controlSchedule.getStart().getMillis()), new Timestamp(controlSchedule.getEnd().getMillis()), controlSchedule.getCron(), controlSchedule.getType().toString());
+		return controlScheduleDAO.create(new Timestamp(controlSchedule.getStart().toDateTime().getMillis()), new Timestamp(controlSchedule.getEnd().toDateTime().getMillis()), controlSchedule.getCron(), controlSchedule.getType().toString());
 	}
 
 	@Override

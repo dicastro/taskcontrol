@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.jooq.DSLContext;
 import org.jooq.Record6;
 import org.jooq.RecordMapper;
@@ -40,8 +41,8 @@ public class ControlScheduleDAOImpl implements ControlScheduleDAO {
 				ControlSchedule controlSchedule = new ControlSchedule();
 				controlSchedule.setId(record.value1());
 				controlSchedule.setStatus(ControlScheduleStatus.valueOf(record.value2()));
-				controlSchedule.setStart(new DateTime(record.value3()));
-				controlSchedule.setEnd(new DateTime(record.value4()));
+				controlSchedule.setStart(new LocalDateTime(record.value3()));
+				controlSchedule.setEnd(new LocalDateTime(record.value4()));
 				controlSchedule.setCron(record.value5());
 				controlSchedule.setType(TypeControl.valueOf(record.value6()));
 				
@@ -58,8 +59,8 @@ public class ControlScheduleDAOImpl implements ControlScheduleDAO {
 		ControlSchedule controlSchedule = new ControlSchedule();
 		controlSchedule.setId(record.value1());
 		controlSchedule.setStatus(ControlScheduleStatus.valueOf(record.value2()));
-		controlSchedule.setStart(new DateTime(record.value3()));
-		controlSchedule.setEnd(new DateTime(record.value4()));
+		controlSchedule.setStart(new LocalDateTime(record.value3()));
+		controlSchedule.setEnd(new LocalDateTime(record.value4()));
 		controlSchedule.setCron(record.value5());
 		controlSchedule.setType(TypeControl.valueOf(record.value6()));
 		
@@ -77,8 +78,8 @@ public class ControlScheduleDAOImpl implements ControlScheduleDAO {
 				ControlSchedule controlSchedule = new ControlSchedule();
 				controlSchedule.setId(record.value1());
 				controlSchedule.setStatus(ControlScheduleStatus.valueOf(record.value2()));
-				controlSchedule.setStart(new DateTime(record.value3()));
-				controlSchedule.setEnd(new DateTime(record.value4()));
+				controlSchedule.setStart(new LocalDateTime(record.value3()));
+				controlSchedule.setEnd(new LocalDateTime(record.value4()));
 				controlSchedule.setCron(record.value5());
 				controlSchedule.setType(TypeControl.valueOf(record.value6()));
 				
@@ -98,8 +99,8 @@ public class ControlScheduleDAOImpl implements ControlScheduleDAO {
 				ControlSchedule controlSchedule = new ControlSchedule();
 				controlSchedule.setId(record.value1());
 				controlSchedule.setStatus(ControlScheduleStatus.valueOf(record.value2()));
-				controlSchedule.setStart(new DateTime(record.value3()));
-				controlSchedule.setEnd(new DateTime(record.value4()));
+				controlSchedule.setStart(new LocalDateTime(record.value3()));
+				controlSchedule.setEnd(new LocalDateTime(record.value4()));
 				controlSchedule.setCron(record.value5());
 				controlSchedule.setType(TypeControl.valueOf(record.value6()));
 				

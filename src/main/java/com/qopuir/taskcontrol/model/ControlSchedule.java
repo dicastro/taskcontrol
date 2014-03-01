@@ -1,6 +1,6 @@
 package com.qopuir.taskcontrol.model;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_NULL)
 public class ControlSchedule {
 	private Long id;
-	private DateTime start;
-	private DateTime end;
+	private LocalDateTime start;
+	private LocalDateTime end;
 	private String cron;
 	private TypeControl type;
 	private ControlScheduleStatus status;
@@ -25,19 +25,19 @@ public class ControlSchedule {
 		this.id = id;
 	}
 
-	public DateTime getStart() {
+	public LocalDateTime getStart() {
 		return start;
 	}
 
-	public void setStart(DateTime start) {
+	public void setStart(LocalDateTime start) {
 		this.start = start;
 	}
 
-	public DateTime getEnd() {
+	public LocalDateTime getEnd() {
 		return end;
 	}
 
-	public void setEnd(DateTime end) {
+	public void setEnd(LocalDateTime end) {
 		this.end = end;
 	}
 
