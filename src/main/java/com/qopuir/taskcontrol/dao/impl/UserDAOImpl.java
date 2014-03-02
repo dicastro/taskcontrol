@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qopuir.taskcontrol.dao.UserDAO;
 import com.qopuir.taskcontrol.model.User;
-import com.qopuir.taskcontrol.model.h2.Tables;
-import com.qopuir.taskcontrol.model.h2.tables.Users;
+import com.qopuir.taskcontrol.model.mysql.Tables;
+import com.qopuir.taskcontrol.model.mysql.tables.Users;
 
 @Repository
 public class UserDAOImpl implements UserDAO {

@@ -13,10 +13,10 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>3.2.8.RELEASE</spring.version>
-		<jackson.version>1.9.13</jackson.version>
 		<jooq.version>3.3.0</jooq.version>
-		<h2.version>1.3.175</h2.version>
 		<jackson.version>2.3.1</jackson.version>
+		<h2.version>1.3.175</h2.version>
+		<mysql.version>5.1.29</mysql.version>
 	</properties>
 
 	<dependencies>
@@ -32,6 +32,22 @@
 			<groupId>org.jooq</groupId>
 			<artifactId>jooq</artifactId>
 			<version>${jooq.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq-meta</artifactId>
+			<version>${jooq.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq-codegen</artifactId>
+			<version>${jooq.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.version}</version>
 		</dependency>
 
 		<dependency>
@@ -168,26 +184,31 @@
 
                 <executions>
                     <execution>
-                        <id>create-database-h2</id>
+                        <id>create-database-mysql</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>execute</goal>
                         </goals>
                         <configuration>
-                            <driver>${db.driver}</driver>
-                            <url>${db.url}</url>
-                            <username>${db.username}</username>
-                            <password>${db.password}</password>
- 
+                            <driver>${db.mysql.driver}</driver>
+                            <url>${db.mysql.url}</url>
+                            <username>${db.mysql.username}</username>
+                            <password>${db.mysql.password}</password>
                             <autocommit>true</autocommit>
                             <srcFiles>
-                                <srcFile>src/main/resources/db-h2-schema.sql</srcFile>
+                                <srcFile>src/main/resources/sql/db-mysql-schema.sql</srcFile>
                             </srcFiles>
                         </configuration>
                     </execution>
                 </executions>
                 
                 <dependencies>
+	                <dependency>
+						<groupId>mysql</groupId>
+						<artifactId>mysql-connector-java</artifactId>
+						<version>${mysql.version}</version>
+					</dependency>
+					
                     <dependency>
                         <groupId>com.h2database</groupId>
                         <artifactId>h2</artifactId>
@@ -204,26 +225,26 @@
 
                 <executions>
                     <execution>
-                        <id>generate-h2</id>
+                        <id>generate-mysql</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
                             <jdbc>
-                                <driver>${db.driver}</driver>
-                                <url>${db.url}</url>
-                                <user>${db.username}</user>
-                                <password>${db.password}</password>
+                                <driver>${db.mysql.driver}</driver>
+                                <url>${db.mysql.url}</url>
+                                <user>${db.mysql.username}</user>
+                                <password>${db.mysql.password}</password>
                             </jdbc>
                             <generator>
                                 <name>org.jooq.util.DefaultGenerator</name>
                                 <database>
-                                    <name>org.jooq.util.h2.H2Database</name>
+                                    <name>org.jooq.util.mysql.MySQLDatabase</name>
+                                    <inputSchema>taskcontrol</inputSchema>
                                     <includes>.*</includes>
                                     <excludes></excludes>
                                     <dateAsTimestamp>true</dateAsTimestamp>
-                                    <inputSchema>PUBLIC</inputSchema>
                                 </database>
                                 <generate>
                                     <deprecated>false</deprecated>
@@ -231,7 +252,7 @@
                                     <pojos>false</pojos>
                                 </generate>
                                 <target>
-                                    <packageName>com.qopuir.taskcontrol.model.h2</packageName>
+                                    <packageName>com.qopuir.taskcontrol.model.mysql</packageName>
                                     <directory>${basedir}/src/main/java</directory>
                                 </target>
                             </generator>
@@ -239,6 +260,12 @@
                     </execution>
                 </executions>
                 <dependencies>
+                	<dependency>
+						<groupId>mysql</groupId>
+						<artifactId>mysql-connector-java</artifactId>
+						<version>${mysql.version}</version>
+					</dependency>
+					
                     <dependency>
                         <groupId>com.h2database</groupId>
                         <artifactId>h2</artifactId>

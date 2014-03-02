@@ -1,4 +1,4 @@
-package com.qopuir.taskcontrol.utils;
+package com.qopuir.taskcontrol.jooq.utils;
 
 import org.jooq.ExecuteContext;
 import org.jooq.SQLDialect;

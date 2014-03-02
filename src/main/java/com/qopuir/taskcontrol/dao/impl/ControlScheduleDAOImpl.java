@@ -16,8 +16,8 @@ import com.qopuir.taskcontrol.dao.ControlScheduleDAO;
 import com.qopuir.taskcontrol.model.ControlSchedule;
 import com.qopuir.taskcontrol.model.ControlScheduleStatus;
 import com.qopuir.taskcontrol.model.TypeControl;
-import com.qopuir.taskcontrol.model.h2.Tables;
-import com.qopuir.taskcontrol.model.h2.tables.records.ControlsScheduleRecord;
+import com.qopuir.taskcontrol.model.mysql.Tables;
+import com.qopuir.taskcontrol.model.mysql.tables.records.ControlsScheduleRecord;
 
 @Repository
 public class ControlScheduleDAOImpl implements ControlScheduleDAO {

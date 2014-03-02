@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qopuir.taskcontrol.dao.ControlDAO;
 import com.qopuir.taskcontrol.model.Control;
-import com.qopuir.taskcontrol.model.h2.Tables;
-import com.qopuir.taskcontrol.model.h2.tables.Controls;
+import com.qopuir.taskcontrol.model.mysql.Tables;
+import com.qopuir.taskcontrol.model.mysql.tables.Controls;
 
 @Repository
 public class ControlDAOImpl implements ControlDAO {
