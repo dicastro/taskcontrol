@@ -1,0 +1,26 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qopuir.taskcontrol.dao.UserDAO">
+	<resultMap id="userMap" type="UserVO">
+		<id column="USERNAME" property="username" />
+		<result column="PASSWORD" property="password" />
+		<result column="EMAIL" property="email" />
+	</resultMap>
+
+	<select id="list" resultMap="userMap">
+		SELECT U.USERNAME, U.PASSWORD, U.EMAIL
+		FROM TASKCONTROL.USERS AS U
+	</select>
+	
+	<insert id="create" parameterType="UserVO" useGeneratedKeys="false">
+		INSERT INTO TASKCONTROL.USERS (USERNAME, PASSWORD, EMAIL)
+		VALUES (#{username}, #{password}, #{email})
+	</insert>
+
+	<select id="listControlUsers" resultMap="userMap">
+		SELECT U.USERNAME, U.EMAIL
+		FROM TASKCONTROL.USERS AS U
+		INNER JOIN TASKCONTROL.USER_CONTROLS AS UC ON UC.USER_USERNAME = U.USERNAME
+		WHERE UC.CONTROL_NAME = #{controlName.literal}
+	</select>
+</mapper>

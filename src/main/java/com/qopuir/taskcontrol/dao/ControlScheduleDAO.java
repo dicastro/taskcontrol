@@ -1,46 +1,35 @@
 package com.qopuir.taskcontrol.dao;
 
-import java.sql.Timestamp;
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
+import org.apache.ibatis.annotations.Param;
 
-import com.qopuir.taskcontrol.model.ControlSchedule;
+import com.qopuir.taskcontrol.entities.ControlScheduleVO;
+import com.qopuir.taskcontrol.entities.enums.ControlScheduleStatus;
 
 public interface ControlScheduleDAO {
 	/**
      * Create a control schedule
      */
-    @Transactional
-    Long create(Timestamp start, Timestamp end, String cron, String typeControl);
+    void create(ControlScheduleVO controlSchedule);
     
     /**
      * Get list of control schedules
      */
-    @Transactional(readOnly = true)
-    List<ControlSchedule> list();
+    List<ControlScheduleVO> list();
     
     /**
      * Get a control schedule by id
      */
-    @Transactional(readOnly = true)
-	ControlSchedule findOne(Long controlId);
+	ControlScheduleVO findById(@Param("controlId") Long controlId);
     
     /**
-     * Get control schedules ready to be run
+     * Get control schedules by status
      */
-    @Transactional(readOnly = true)
-    List<ControlSchedule> findReadyToRun();
-    
-    /**
-     * Get control schedules ready to be finished
-     */
-    @Transactional(readOnly = true)
-	List<ControlSchedule> findReadyToFinish();
+    List<ControlScheduleVO> findByStatus(@Param("status") ControlScheduleStatus status);
     
     /**
      * Pause a control schedule
      */
-    @Transactional
-    void updateStatus(Long controlId, String newStatus);
+    void updateStatus(@Param("controlId") Long controlId, @Param("newStatus") ControlScheduleStatus newStatus);
 }

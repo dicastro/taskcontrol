@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<typeAliases>
+		<typeAlias type="com.qopuir.taskcontrol.entities.UserVO" alias="UserVO" />
+		<typeAlias type="com.qopuir.taskcontrol.entities.ControlVO" alias="ControlVO" />
+		<typeAlias type="com.qopuir.taskcontrol.entities.ControlUserVO" alias="ControlUserVO" />
+		<typeAlias type="com.qopuir.taskcontrol.entities.ControlScheduleVO" alias="ControlScheduleVO" />
+	</typeAliases>
+	<mappers>
+		<mapper resource="mybatis/mappers/user-mappers.xml" />
+		<mapper resource="mybatis/mappers/controlUser-mappers.xml" />
+		<mapper resource="mybatis/mappers/control-mappers.xml" />
+		<mapper resource="mybatis/mappers/controlSchedule-mappers.xml" />
+	</mappers>
+</configuration>

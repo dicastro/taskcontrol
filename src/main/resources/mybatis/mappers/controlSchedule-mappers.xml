@@ -1,0 +1,46 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qopuir.taskcontrol.dao.ControlScheduleDAO">
+	<resultMap id="controlScheduleMap" type="ControlScheduleVO">
+		<id column="ID" property="id" />
+		<result column="START" property="start" javaType="org.joda.time.LocalDateTime" typeHandler="com.qopuir.taskcontrol.mybatis.typeHandlers.LocalDateTimeTypeHandler" />
+		<result column="END" property="end" javaType="org.joda.time.LocalDateTime" typeHandler="com.qopuir.taskcontrol.mybatis.typeHandlers.LocalDateTimeTypeHandler" />
+		<result column="CRON" property="cron" />
+		<result column="CONTROL_NAME" property="controlName" javaType="com.qopuir.taskcontrol.entities.enums.ControlName" typeHandler="com.qopuir.taskcontrol.mybatis.typeHandlers.ControlNameTypeHandler" />
+		<result column="STATUS" property="status" javaType="com.qopuir.taskcontrol.entities.enums.ControlScheduleStatus" typeHandler="com.qopuir.taskcontrol.mybatis.typeHandlers.ControlScheduleStatusTypeHandler" />
+	</resultMap>
+
+	<insert id="create" parameterType="ControlUserVO" useGeneratedKeys="true">
+		INSERT INTO TASKCONTROL.CONTROL_SCHEDULES (START, END, CRON, CONTROL_NAME, STATUS)
+		VALUES (#{start,typeHandler=com.qopuir.taskcontrol.mybatis.typeHandlers.LocalDateTimeTypeHandler}, #{end,typeHandler=com.qopuir.taskcontrol.mybatis.typeHandlers.LocalDateTimeTypeHandler}, #{cron}, #{controlName,typeHandler=com.qopuir.taskcontrol.mybatis.typeHandlers.ControlNameTypeHandler}, 'PENDING')
+		<selectKey resultType="long" order="AFTER" keyProperty="id">
+	        SELECT LAST_INSERT_ID() AS ID
+	    </selectKey>
+	</insert>
+	
+	<select id="list" resultMap="controlScheduleMap">
+		SELECT ID, START, END, CRON, CONTROL_NAME, STATUS
+		FROM TASKCONTROL.CONTROL_SCHEDULES AS CS
+	</select>
+	
+	<select id="findById" resultMap="controlScheduleMap">
+		SELECT ID, START, END, CRON, CONTROL_NAME, STATUS
+		FROM TASKCONTROL.CONTROL_SCHEDULES AS CS
+		WHERE CS.ID = #{controlId}
+	</select>
+	
+	<select id="findByStatus" resultMap="controlScheduleMap">
+		SELECT ID, START, END, CRON, CONTROL_NAME, STATUS
+		FROM TASKCONTROL.CONTROL_SCHEDULES AS CS
+		WHERE CS.STATUS = #{status,typeHandler=com.qopuir.taskcontrol.mybatis.typeHandlers.ControlScheduleStatusTypeHandler}
+	</select>
+	
+	<select id="findReadyToFinish" resultMap="controlScheduleMap">
+	</select>
+	
+	<update id="updateStatus">
+		UPDATE TASKCONTROL.CONTROL_SCHEDULES
+		SET STATUS = #{newStatus,typeHandler=com.qopuir.taskcontrol.mybatis.typeHandlers.ControlScheduleStatusTypeHandler}
+		WHERE ID = #{controlId}
+	</update>
+</mapper>

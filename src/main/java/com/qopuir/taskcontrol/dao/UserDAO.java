@@ -2,38 +2,24 @@ package com.qopuir.taskcontrol.dao;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
+import org.apache.ibatis.annotations.Param;
 
-import com.qopuir.taskcontrol.model.User;
+import com.qopuir.taskcontrol.entities.UserVO;
+import com.qopuir.taskcontrol.entities.enums.ControlName;
 
 public interface UserDAO {
 	/**
      * Create a new user.
      */
-    @Transactional
-    void create(String userName, String password, String email);
+    void create(UserVO user);
     
     /**
      * Get list of users
      */
-    @Transactional(readOnly = true)
-    List<User> list();
+    List<UserVO> list();
     
     /**
-     * Adds a control to a user
+     * Get list of control's users
      */
-    @Transactional
-    void addControl(String username, String controlName);
-
-    /**
-     * Removes a user's control
-     */
-	@Transactional
-	void removeControl(String username, String controlName);
-	
-	/**
-	 * Get list of control's users
-	 */
-	@Transactional(readOnly = true)
-	List<User> listControlUsers(String controlName);
+    List<UserVO> listControlUsers(@Param("controlName") ControlName controlName);
 }

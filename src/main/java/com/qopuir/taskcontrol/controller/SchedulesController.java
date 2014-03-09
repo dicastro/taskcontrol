@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.qopuir.taskcontrol.model.ControlSchedule;
+import com.qopuir.taskcontrol.entities.ControlScheduleVO;
 import com.qopuir.taskcontrol.service.ControlScheduleService;
 
 @Controller
@@ -25,20 +25,20 @@ public class SchedulesController {
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseStatus(value = HttpStatus.OK)
 	@ResponseBody
-	public List<ControlSchedule> getSchedules() {
+	public List<ControlScheduleVO> getSchedules() {
 		return controlScheduleService.list();
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(value = HttpStatus.CREATED)
-	public void createControlSchedule(@RequestBody ControlSchedule controlSchedule) {
+	public void createControlSchedule(@RequestBody ControlScheduleVO controlSchedule) {
 		controlScheduleService.create(controlSchedule);
 	}
 	
 	@RequestMapping(value = "/{scheduleId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(value = HttpStatus.OK)
 	@ResponseBody
-	public void updateControlSchedule(@PathVariable("scheduleId") Long scheduleId, @RequestBody ControlSchedule controlSchedule) {
+	public void updateControlSchedule(@PathVariable("scheduleId") Long scheduleId, @RequestBody ControlScheduleVO controlSchedule) {
 		switch (controlSchedule.getStatus()) {
 		case PAUSED:
 			controlScheduleService.pause(scheduleId);

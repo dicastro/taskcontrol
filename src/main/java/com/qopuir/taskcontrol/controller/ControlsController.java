@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.qopuir.taskcontrol.model.Control;
-import com.qopuir.taskcontrol.model.User;
+import com.qopuir.taskcontrol.entities.ControlVO;
+import com.qopuir.taskcontrol.entities.UserVO;
+import com.qopuir.taskcontrol.entities.enums.ControlName;
 import com.qopuir.taskcontrol.service.ControlService;
 import com.qopuir.taskcontrol.service.UserService;
 
@@ -27,14 +28,14 @@ public class ControlsController {
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseStatus(value = HttpStatus.OK)
 	@ResponseBody
-	public List<Control> getControls() {
+	public List<ControlVO> getControls() {
 		return controlService.list();
 	}
 	
 	@RequestMapping(value = "/{controlName}/users", method = RequestMethod.GET)
 	@ResponseStatus(value = HttpStatus.OK)
 	@ResponseBody
-	public List<User> getUserControls(@PathVariable("controlName") String controlName) {
+	public List<UserVO> getUserControls(@PathVariable("controlName") ControlName controlName) {
 		return userService.listControlUsers(controlName);
 	}
 }

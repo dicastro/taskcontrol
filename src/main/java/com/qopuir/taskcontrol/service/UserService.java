@@ -2,38 +2,32 @@ package com.qopuir.taskcontrol.service;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
-
-import com.qopuir.taskcontrol.model.User;
+import com.qopuir.taskcontrol.entities.UserVO;
+import com.qopuir.taskcontrol.entities.enums.ControlName;
 
 public interface UserService {
 	/**
      * Create a new user.
      */
-    @Transactional
-    void create(User user);
+    void create(UserVO user);
     
     /**
      * Get list of users
      */
-    @Transactional(readOnly = true)
-    List<User> list();
+    List<UserVO> list();
     
     /**
      * Adds a control to a user
      */
-    @Transactional
-    void addControl(String username, String controlName);
+    void addControl(String username, ControlName controlName);
 
     /**
      * Removes a user's control
      */
-	@Transactional
-	void removeControl(String username, String controlName);
+	void removeControl(String username, ControlName controlName);
 	
 	/**
 	 * Get list of control's users
 	 */
-	@Transactional(readOnly = true)
-	List<User> listControlUsers(String controlName);
+	List<UserVO> listControlUsers(ControlName controlName);
 }

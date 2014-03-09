@@ -2,56 +2,61 @@ package com.qopuir.taskcontrol.service;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
-
-import com.qopuir.taskcontrol.model.ControlSchedule;
+import com.qopuir.taskcontrol.entities.ControlScheduleVO;
 
 public interface ControlScheduleService {
 	/**
      * Create a control schedule
      */
-    @Transactional
-    Long create(ControlSchedule controlSchedule);
+    Long create(ControlScheduleVO controlSchedule);
     
     /**
      * Get list of control schedules
      */
-    @Transactional(readOnly = true)
-    List<ControlSchedule> list();
+    List<ControlScheduleVO> list();
     
     /**
      * Get a control schedule by id
      */
-    @Transactional(readOnly = true)
-	ControlSchedule findOne(Long controlId);
+	ControlScheduleVO findById(Long controlId);
     
     /**
      * Get control schedules pending
      */
-    @Transactional(readOnly = true)
-    List<ControlSchedule> findReadyToRun();
+    List<ControlScheduleVO> findReadyToRun();
     
     /**
      * Get control schedules finished
      */
-    @Transactional(readOnly = true)
-    List<ControlSchedule> findReadyToFinish();
+    List<ControlScheduleVO> findReadyToFinish();
+    
+    /**
+     * Start a control schedule
+     */
+    void start(Long controlId);
+    
+    /**
+     * Start a list of control schedules
+     */
+    void start(List<ControlScheduleVO> controlSchedules);
     
     /**
      * Pause a control schedule
      */
-    @Transactional
     void pause(Long controlId);
 
     /**
      * Resume a control schedule
      */
-	@Transactional
 	void resume(Long controlId);
 	
 	/**
 	 * Finish a control schedule
 	 */
-	@Transactional
 	void finish(Long controlId);
+	
+	/**
+	 * Finish a list of control schedules
+	 */
+	void finish(List<ControlScheduleVO> controlSchedules);
 }

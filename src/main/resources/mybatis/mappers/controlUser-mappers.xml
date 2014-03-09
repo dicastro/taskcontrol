@@ -1,0 +1,19 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qopuir.taskcontrol.dao.ControlUserDAO">
+	<resultMap id="controlUserMap" type="UserVO">
+		<id column="USER_USERNAME" property="userUsername" />
+		<result column="CONTROL_NAME" property="controlName" javaType="com.qopuir.taskcontrol.entities.enums.ControlName" typeHandler="com.qopuir.taskcontrol.mybatis.typeHandlers.ControlNameTypeHandler" />
+	</resultMap>
+
+	<insert id="create" parameterType="ControlUserVO" useGeneratedKeys="false">
+		INSERT INTO TASKCONTROL.USER_CONTROLS (USER_USERNAME, CONTROL_NAME)
+		VALUES (#{userUsername}, #{controlName,typeHandler=com.qopuir.taskcontrol.mybatis.typeHandlers.ControlNameTypeHandler})
+	</insert>
+	
+	<delete id="remove" parameterType="ControlUserVO">
+		DELETE FROM TASKCONTROL.USER_CONTROLS
+		WHERE USER_USERNAME = #{userUsername}
+		AND CONTROL_NAME = #{controlName.literal}
+	</delete>
+</mapper>

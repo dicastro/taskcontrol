@@ -2,20 +2,16 @@ package com.qopuir.taskcontrol.service;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
-
-import com.qopuir.taskcontrol.model.Control;
+import com.qopuir.taskcontrol.entities.ControlVO;
 
 public interface ControlService {
     /**
      * Get list of controls
      */
-    @Transactional(readOnly = true)
-    List<Control> list();
+    List<ControlVO> list();
     
     /**
      * Get list of controls of user
      */
-    @Transactional(readOnly = true)
-    List<Control> listUserControls(String username);
+    List<ControlVO> listUserControls(String username);
 }

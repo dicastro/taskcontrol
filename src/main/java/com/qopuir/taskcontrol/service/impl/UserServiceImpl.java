@@ -6,42 +6,47 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.qopuir.taskcontrol.dao.ControlUserDAO;
 import com.qopuir.taskcontrol.dao.UserDAO;
-import com.qopuir.taskcontrol.model.User;
+import com.qopuir.taskcontrol.entities.ControlUserVO;
+import com.qopuir.taskcontrol.entities.UserVO;
+import com.qopuir.taskcontrol.entities.enums.ControlName;
 import com.qopuir.taskcontrol.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
 	@Autowired
     UserDAO userDAO;
+	@Autowired
+    ControlUserDAO controlUserDAO;
 	
 	@Override
 	@Transactional
-	public void create(User user) {
-		userDAO.create(user.getUsername(), user.getPassword(), user.getEmail());
+	public void create(UserVO userVO) {
+		userDAO.create(userVO);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<User> list() {
+	public List<UserVO> list() {
 		return userDAO.list();
 	}
 	
 	@Override
 	@Transactional
-	public void addControl(String username, String controlName) {
-        userDAO.addControl(username, controlName);
+	public void addControl(String username, ControlName controlName) {
+		controlUserDAO.create(new ControlUserVO().setUserUsername(username).setControlName(controlName));
 	}
 	
 	@Override
 	@Transactional
-	public void removeControl(String username, String controlName) {
-        userDAO.removeControl(username, controlName);
+	public void removeControl(String username, ControlName controlName) {
+        controlUserDAO.remove(new ControlUserVO().setUserUsername(username).setControlName(controlName));
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<User> listControlUsers(String controlName) {
+	public List<UserVO> listControlUsers(ControlName controlName) {
 		return userDAO.listControlUsers(controlName);
 	}
 }
