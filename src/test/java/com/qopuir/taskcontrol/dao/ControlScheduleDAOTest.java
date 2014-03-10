@@ -47,10 +47,10 @@ public class ControlScheduleDAOTest {
 				CommonOperations.DELETE_ALL,
 				CommonOperations.INSERT_REFERENCE_DATA,
 				insertInto("CONTROL_SCHEDULES")
-						.columns("ID", "START", "END", "CRON", "CONTROL_NAME", "STATUS")
-						.withBinder(new LocalDateTimeBinder(), "START", "END")
-						.withBinder(new EnumTypeBinder(), "CONTROL_NAME", "STATUS")
-						.row().column("ID", 1L).column("START", new LocalDateTime(2014, 01, 01, 12, 0, 0)).column("END", new LocalDateTime(2014, 12, 31, 12, 0, 0)).column("CRON", "cron").column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("STATUS", ControlScheduleStatus.FINISHED).end()
+						.columns("ID", "START_DATE", "END_DATE", "CRON", "CONTROL_NAME", "SCHEDULE_STATUS")
+						.withBinder(new LocalDateTimeBinder(), "START_DATE", "END_DATE")
+						.withBinder(new EnumTypeBinder(), "CONTROL_NAME", "SCHEDULE_STATUS")
+						.row().column("ID", 1L).column("START_DATE", new LocalDateTime(2014, 01, 01, 12, 0, 0)).column("END_DATE", new LocalDateTime(2014, 12, 31, 12, 0, 0)).column("CRON", "cron").column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("SCHEDULE_STATUS", ControlScheduleStatus.FINISHED).end()
 						.useMetadata(false)
 						.build()
 		);
@@ -123,9 +123,27 @@ public class ControlScheduleDAOTest {
         List<ControlScheduleVO> result = controlScheduleDAO.findByStatus(ControlScheduleStatus.RUNNING);
 
         Assert.assertEquals(1, result.size());
+        Assert.assertEquals(new LocalDateTime(2014, 01, 01, 12, 0, 0), result.get(0).getStart());
+        Assert.assertEquals(new LocalDateTime(2014, 12, 31, 12, 0, 0), result.get(0).getEnd());
         
         result = controlScheduleDAO.findByStatus(ControlScheduleStatus.FINISHED);
 
         Assert.assertEquals(0, result.size());
+    }
+	
+	@Test
+	@Transactional
+    public void updateStatus_statusIsChangedAndDatesRemainEquals() {
+		ControlScheduleVO controlScheduleVO = controlScheduleDAO.findById(1L);
+		Assert.assertEquals(ControlScheduleStatus.FINISHED, controlScheduleVO.getStatus());
+		Assert.assertEquals(new LocalDateTime(2014, 01, 01, 12, 0, 0), controlScheduleVO.getStart());
+        Assert.assertEquals(new LocalDateTime(2014, 12, 31, 12, 0, 0), controlScheduleVO.getEnd());
+		
+		controlScheduleDAO.updateStatus(1L, ControlScheduleStatus.RUNNING);
+		
+		controlScheduleVO = controlScheduleDAO.findById(1L);
+		Assert.assertEquals(ControlScheduleStatus.RUNNING, controlScheduleVO.getStatus());
+		Assert.assertEquals(new LocalDateTime(2014, 01, 01, 12, 0, 0), controlScheduleVO.getStart());
+        Assert.assertEquals(new LocalDateTime(2014, 12, 31, 12, 0, 0), controlScheduleVO.getEnd());
     }
 }

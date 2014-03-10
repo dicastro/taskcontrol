@@ -8,14 +8,13 @@ import java.sql.Timestamp;
 
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
-import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 
 public class LocalDateTimeTypeHandler implements TypeHandler<LocalDateTime> {
 	@Override
 	public void setParameter(PreparedStatement ps, int columnIndex, LocalDateTime parameter, JdbcType jdbcType) throws SQLException {
 		if (parameter != null) {
-			ps.setTimestamp(columnIndex, new Timestamp(parameter.toDateTime(DateTimeZone.UTC).toDate().getTime()));
+			ps.setTimestamp(columnIndex, new Timestamp(parameter.toDateTime().getMillis()));
 		} else {
 			ps.setNull(columnIndex, jdbcType.TYPE_CODE);
 		}
@@ -26,7 +25,7 @@ public class LocalDateTimeTypeHandler implements TypeHandler<LocalDateTime> {
 		Timestamp timestamp = rs.getTimestamp(columnName);
 		
 		if (timestamp != null) {
-			return new LocalDateTime(timestamp.getTime(), DateTimeZone.UTC);
+			return new LocalDateTime(timestamp.getTime());
 		} else {
 			return null;
 		}
@@ -37,7 +36,7 @@ public class LocalDateTimeTypeHandler implements TypeHandler<LocalDateTime> {
 		Timestamp timestamp = rs.getTimestamp(columnIndex);
 		
 		if (timestamp != null) {
-			return new LocalDateTime(timestamp.getTime(), DateTimeZone.UTC);
+			return new LocalDateTime(timestamp.getTime());
 		} else {
 			return null;
 		}
@@ -48,7 +47,7 @@ public class LocalDateTimeTypeHandler implements TypeHandler<LocalDateTime> {
 		Timestamp timestamp = cs.getTimestamp(columnIndex);
 		
 		if (timestamp != null) {
-			return new LocalDateTime(timestamp.getTime(), DateTimeZone.UTC);
+			return new LocalDateTime(timestamp.getTime());
 		} else {
 			return null;
 		}

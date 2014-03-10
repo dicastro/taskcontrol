@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<!--
+	JDBC job repository
+	<batch:job-repository id="jobRepository"
+		data-source="lazyConnectionDataSource"
+		transaction-manager="transactionManager"
+		isolation-level-for-create="REPEATABLE_READ"
+		table-prefix="BATCH_"
+		max-varchar-length="1000" />
+	-->
+
+	<!-- In-memory job repository -->
+	<bean id="jobRepository" class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">
+		<property name="transactionManager" ref="transactionManager" />
+	</bean>
+
+	<bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+		<property name="jobRepository" ref="jobRepository" />
+		<property name="taskExecutor">
+			<bean class="org.springframework.core.task.SyncTaskExecutor" />
+			<!--
+	        <bean class="org.springframework.core.task.SimpleAsyncTaskExecutor" />
+			-->
+	    </property>
+	</bean>
+	
+	<bean id="jobRegistry" class="org.springframework.batch.core.configuration.support.MapJobRegistry" />
+
+	<bean id="jobRegistryBeanPostProcessor" class="org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor">
+		<property name="jobRegistry" ref="jobRegistry" />
+	</bean>
+
+	<!-- In-memory job explorer -->
+	<bean id="jobExplorer" class="org.springframework.batch.core.explore.support.MapJobExplorerFactoryBean">
+		<property name="repositoryFactory" ref="&amp;jobRepository" />
+	</bean>
+	<!--
+	JDBC job explorer
+	<bean id="jobExplorer" class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean">
+		<property name="dataSource" ref="lazyConnectionDataSource" />
+		<property name="tablePrefix" value="BATCH_" />
+	</bean>
+	-->
+
+	<bean id="jobOperator" class="org.springframework.batch.core.launch.support.SimpleJobOperator">
+		<property name="jobRepository" ref="jobRepository" />
+		<property name="jobLauncher" ref="jobLauncher" />
+		<property name="jobRegistry" ref="jobRegistry" />
+		<property name="jobExplorer" ref="jobExplorer" />
+	</bean>
+
+	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+					<property name="jobDetail" ref="taskControlStartJobDetail" />
+					<property name="cronExpression" value="*/10 * * * * ?" />
+				</bean>
+				<!--
+				<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+					<property name="jobDetail" ref="taskControlStartStopJobDetail" />
+					<property name="cronExpression" value="*/10 * * * * ?" />
+				</bean>
+				-->
+			</list>
+		</property>
+	</bean>
+
+	<bean id="taskControlStartJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass" value="com.qopuir.taskcontrol.quartz.TaskControlJobLauncherDetails" />
+		<property name="group" value="taskcontrol" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="jobOperator" value-ref="jobOperator" />
+				<entry key="controlScheduleService" value-ref="controlScheduleServiceImpl" />
+			</map>
+		</property>
+	</bean>
+	<batch:job id="taskControlStartJob" job-repository="jobRepository">
+		<batch:step id="processControlSchedulesWaitingToRun">
+			<batch:tasklet transaction-manager="transactionManager">
+				<bean class="com.qopuir.taskcontrol.quartz.tasklets.ControlSchedulesWaitingToRunTasklet">
+					<property name="controlScheduleService" ref="controlScheduleServiceImpl" />
+				</bean>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+
+	<!--
+	<bean id="taskControlStopJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass" value="com.qopuir.taskcontrol.quartz.TaskControlJobLauncherDetails" />
+		<property name="group" value="taskcontrol" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="jobName" value="taskControlStopJob" />
+				<entry key="jobLocator" value-ref="jobRegistry" />
+				<entry key="jobLauncher" value-ref="jobLauncher" />
+			</map>
+		</property>
+	</bean>
+	<batch:job id="taskControlStopJob">
+		<batch:step id="findControlSchedulesWaitingToFinish" next="finishFoundControlSchedulesThatAreRunning" />
+		<batch:step id="runFoundControlSchedulesThatAreNotRunningYet" />
+	</batch:job>
+	-->
+</beans>
