@@ -56,7 +56,15 @@ public class ControlScheduleServiceImpl implements ControlScheduleService {
 	@Override
     @Transactional(readOnly = true)
     public List<ControlScheduleVO> findReadyToFinish() {
-    	return controlScheduleDAO.findByStatus(ControlScheduleStatus.FINISHED);
+		List<ControlScheduleVO> foundControlSchedules = controlScheduleDAO.findByStatus(ControlScheduleStatus.PAUSED);
+		
+		if (foundControlSchedules != null) {
+			foundControlSchedules.addAll(controlScheduleDAO.findByStatus(ControlScheduleStatus.FINISHED));
+		} else {
+			foundControlSchedules = controlScheduleDAO.findByStatus(ControlScheduleStatus.FINISHED);
+		}
+    	
+		return foundControlSchedules;
     }
 	
 	@Override

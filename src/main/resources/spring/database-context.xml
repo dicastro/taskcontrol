@@ -17,12 +17,18 @@
 		</property>
 	</bean>
 
-	<bean id="dataSource" class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close">
-        <property name="driverClass" value="${db.mysql.driver}"/>
-        <property name="jdbcUrl" value="${db.mysql.url}"/>
-        <property name="username" value="${db.mysql.username}"/>
-        <property name="password" value="${db.mysql.password}"/>
-    </bean>
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="${db.mysql.driver}" />
+		<property name="jdbcUrl" value="${db.mysql.url}" />
+		<property name="user" value="${db.mysql.username}" />
+		<property name="password" value="${db.mysql.password}" />
+
+		<!-- these are C3P0 properties -->
+		<property name="acquireIncrement" value="${c3p0.acquireIncrement}" />
+		<property name="minPoolSize" value="${c3p0.minPoolSize}" />
+		<property name="maxPoolSize" value="${c3p0.maxPoolSize}" />
+		<property name="maxIdleTime" value="${c3p0.maxIdleTime}" />
+	</bean>
 
 	<bean id="lazyConnectionDataSource" class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
         <constructor-arg ref="dataSource"/>

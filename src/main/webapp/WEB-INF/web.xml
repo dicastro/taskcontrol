@@ -3,10 +3,12 @@
 <web-app>
 	<display-name>Task Control</display-name>
 
+	<!--
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>/WEB-INF/taskcontrol-servlet.xml</param-value>
 	</context-param>
+	-->
 
 	<filter>
 		<filter-name>httpMethodFilter</filter-name>
@@ -18,9 +20,11 @@
 		<servlet-name>taskcontrol</servlet-name>
 	</filter-mapping>
 
+	<!--
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
+	-->
 
 	<servlet>
 		<servlet-name>taskcontrol</servlet-name>
