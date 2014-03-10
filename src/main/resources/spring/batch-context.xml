@@ -39,7 +39,6 @@
 		<property name="jobRegistry" ref="jobRegistry" />
 	</bean>
 
-<<<<<<< HEAD
 	<!-- In-memory job explorer -->
 	<bean id="jobExplorer" class="org.springframework.batch.core.explore.support.MapJobExplorerFactoryBean">
 		<property name="repositoryFactory" ref="&amp;jobRepository" />
@@ -83,53 +82,6 @@
 			<map>
 				<entry key="jobOperator" value-ref="jobOperator" />
 				<entry key="controlScheduleService" value-ref="controlScheduleServiceImpl" />
-=======
-	<!--
-	In-memory job explorer
-	<bean id="jobExplorer" class="org.springframework.batch.core.explore.support.MapJobExplorerFactoryBean">
-		<property name="repositoryFactory" ref="jobRepository" />
-	</bean>
-	
-	JDBC job explorer
-	<bean id="jobExplorer" class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean">
-		<property name="dataSource" ref="lazyConnectionDataSource" />
-		<property name="tablePrefix" value="BATCH_" />
-	</bean>
-
-	<bean id="jobOperator" class="org.springframework.batch.core.launch.support.SimpleJobOperator">
-		<property name="jobRepository" ref="jobRepository" />
-		<property name="jobLauncher" ref="jobLauncher" />
-		<property name="jobExplorer" ref="jobExplorer" />
-		<property name="jobRegistry" ref="jobRegistry" />
-	</bean>
-	-->
-
-	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-		<property name="triggers">
-			<list>
-				<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-					<property name="jobDetail" ref="taskControlStartJobDetail" />
-					<property name="cronExpression" value="*/10 * * * * ?" />
-				</bean>
-				<!--
-				<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-					<property name="jobDetail" ref="taskControlStartStopJobDetail" />
-					<property name="cronExpression" value="*/10 * * * * ?" />
-				</bean>
-				-->
-			</list>
-		</property>
-	</bean>
-
-	<bean id="taskControlStartJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
-		<property name="jobClass" value="com.qopuir.taskcontrol.quartz.TaskControlJobLauncherDetails" />
-		<property name="group" value="taskcontrol" />
-		<property name="jobDataAsMap">
-			<map>
-				<entry key="jobName" value="taskControlStartJob" />
-				<entry key="jobLocator" value-ref="jobRegistry" />
-				<entry key="jobLauncher" value-ref="jobLauncher" />
->>>>>>> refs/remotes/origin/master
 			</map>
 		</property>
 	</bean>
