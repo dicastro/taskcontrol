@@ -31,7 +31,7 @@ public class TaskControlJobLauncherDetails extends QuartzJobBean {
 		
 		JobParameters jobParameters = getJobParametersFromJobDataMap(jobDataMap);
 		
-		List<ControlScheduleVO> controlSchedulesToRun = controlScheduleService.findReadyToRun();
+		List<ControlScheduleVO> controlSchedulesToRun = controlScheduleService.findReadyToStart();
 
 		for (ControlScheduleVO controlScheduleVO : controlSchedulesToRun) {
 			logger.debug("ControlScheduleToRun: {}", controlScheduleVO.toString());
@@ -56,7 +56,7 @@ public class TaskControlJobLauncherDetails extends QuartzJobBean {
 			}
 		}
 		
-		List<ControlScheduleVO> controlSchedulesToFinish = controlScheduleService.findReadyToFinish();
+		List<ControlScheduleVO> controlSchedulesToFinish = controlScheduleService.findReadyToStop();
 
 		for (ControlScheduleVO controlScheduleVO : controlSchedulesToFinish) {
 			try {

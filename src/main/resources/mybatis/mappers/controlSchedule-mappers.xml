@@ -35,7 +35,49 @@
 		SELECT <include refid="controlScheduleColumns"/>
 		FROM TASKCONTROL.CONTROL_SCHEDULES AS CS
 		WHERE CS.SCHEDULE_STATUS = #{status,typeHandler=com.qopuir.taskcontrol.mybatis.typeHandlers.ControlScheduleStatusTypeHandler}
+	</select>
+	
+	<select id="findByStatusList" resultMap="controlScheduleMap">
+		SELECT <include refid="controlScheduleColumns"/>
+		FROM TASKCONTROL.CONTROL_SCHEDULES AS CS
+		WHERE CS.SCHEDULE_STATUS IN
+		<foreach item="status" index="index" collection="statusList" open="(" separator="," close=")">
+            #{status,typeHandler=com.qopuir.taskcontrol.mybatis.typeHandlers.ControlScheduleStatusTypeHandler}
+        </foreach>
+	</select>
+	
+	<select id="findByStatusWithinPeriod" resultMap="controlScheduleMap">
+		SELECT <include refid="controlScheduleColumns"/>
+		FROM TASKCONTROL.CONTROL_SCHEDULES AS CS
+		WHERE CS.SCHEDULE_STATUS = #{status,typeHandler=com.qopuir.taskcontrol.mybatis.typeHandlers.ControlScheduleStatusTypeHandler}
 			AND CURRENT_TIMESTAMP BETWEEN CS.START_DATE AND CS.END_DATE
+	</select>
+	
+	<select id="findByStatusListWithinPeriod" resultMap="controlScheduleMap">
+		SELECT <include refid="controlScheduleColumns"/>
+		FROM TASKCONTROL.CONTROL_SCHEDULES AS CS
+		WHERE CURRENT_TIMESTAMP BETWEEN CS.START_DATE AND CS.END_DATE
+			AND CS.SCHEDULE_STATUS IN
+			<foreach item="status" index="index" collection="statusList" open="(" separator="," close=")">
+				#{status,typeHandler=com.qopuir.taskcontrol.mybatis.typeHandlers.ControlScheduleStatusTypeHandler}
+	        </foreach>
+	</select>
+	
+	<select id="findByStatusAfterPeriod" resultMap="controlScheduleMap">
+		SELECT <include refid="controlScheduleColumns"/>
+		FROM TASKCONTROL.CONTROL_SCHEDULES AS CS
+		WHERE CS.SCHEDULE_STATUS = #{status,typeHandler=com.qopuir.taskcontrol.mybatis.typeHandlers.ControlScheduleStatusTypeHandler}
+			AND CS.END_DATE <![CDATA[ < ]]> CURRENT_TIMESTAMP
+	</select>
+	
+	<select id="findByStatusListAfterPeriod" resultMap="controlScheduleMap">
+		SELECT <include refid="controlScheduleColumns"/>
+		FROM TASKCONTROL.CONTROL_SCHEDULES AS CS
+		WHERE CS.END_DATE <![CDATA[ < ]]> CURRENT_TIMESTAMP
+			AND CS.SCHEDULE_STATUS IN
+			<foreach item="status" index="index" collection="statusList" open="(" separator="," close=")">
+				#{status,typeHandler=com.qopuir.taskcontrol.mybatis.typeHandlers.ControlScheduleStatusTypeHandler}
+	        </foreach>
 	</select>
 	
 	<update id="updateStatus">

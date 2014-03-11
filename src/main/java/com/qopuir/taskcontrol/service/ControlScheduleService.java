@@ -3,6 +3,7 @@ package com.qopuir.taskcontrol.service;
 import java.util.List;
 
 import com.qopuir.taskcontrol.entities.ControlScheduleVO;
+import com.qopuir.taskcontrol.entities.enums.ControlScheduleAction;
 
 public interface ControlScheduleService {
 	/**
@@ -18,45 +19,30 @@ public interface ControlScheduleService {
     /**
      * Get a control schedule by id
      */
-	ControlScheduleVO findById(Long controlId);
+	ControlScheduleVO findById(Long controlScheduleId);
     
     /**
      * Get control schedules pending
      */
-    List<ControlScheduleVO> findReadyToRun();
+    List<ControlScheduleVO> findReadyToStart();
     
     /**
      * Get control schedules finished
      */
-    List<ControlScheduleVO> findReadyToFinish();
+    List<ControlScheduleVO> findReadyToStop();
     
     /**
      * Start a control schedule
      */
-    void start(Long controlId);
+    void start(Long controlScheduleId);
     
-    /**
-     * Start a list of control schedules
-     */
-    void start(List<ControlScheduleVO> controlSchedules);
-    
-    /**
-     * Pause a control schedule
-     */
-    void pause(Long controlId);
-
-    /**
-     * Resume a control schedule
-     */
-	void resume(Long controlId);
+	/**
+	 * Stop a control schedule
+	 */
+	void stop(Long controlScheduleId);
 	
 	/**
-	 * Finish a control schedule
+	 * Execute an action over a control schedule
 	 */
-	void finish(Long controlId);
-	
-	/**
-	 * Finish a list of control schedules
-	 */
-	void finish(List<ControlScheduleVO> controlSchedules);
+	void executeAction(Long controlScheduleId, ControlScheduleAction action);
 }

@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qopuir.taskcontrol.entities.ControlScheduleVO;
+import com.qopuir.taskcontrol.entities.enums.ControlScheduleAction;
 import com.qopuir.taskcontrol.service.ControlScheduleService;
 
 @Controller
@@ -35,22 +37,10 @@ public class SchedulesController {
 		controlScheduleService.create(controlSchedule);
 	}
 	
-	@RequestMapping(value = "/{scheduleId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{controlSecheduleId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(value = HttpStatus.OK)
 	@ResponseBody
-	public void updateControlSchedule(@PathVariable("scheduleId") Long scheduleId, @RequestBody ControlScheduleVO controlSchedule) {
-		switch (controlSchedule.getStatus()) {
-		case PAUSED:
-			controlScheduleService.pause(scheduleId);
-			break;
-		case RUNNING:
-			controlScheduleService.resume(scheduleId);
-			break;
-		case FINISHED:
-			controlScheduleService.finish(scheduleId);
-			break;
-		default:
-			break;
-		}
+	public void updateControlSchedule(@PathVariable("controlSecheduleId") Long controlScheduleId, @RequestParam(value = "action", required = true) ControlScheduleAction action) {
+		controlScheduleService.executeAction(controlScheduleId, action);
 	}
 }

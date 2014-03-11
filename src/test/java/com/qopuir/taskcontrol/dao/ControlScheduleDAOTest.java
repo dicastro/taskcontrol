@@ -3,6 +3,7 @@ package com.qopuir.taskcontrol.dao;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.Operations.sequenceOf;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -50,7 +51,10 @@ public class ControlScheduleDAOTest {
 						.columns("ID", "START_DATE", "END_DATE", "CRON", "CONTROL_NAME", "SCHEDULE_STATUS")
 						.withBinder(new LocalDateTimeBinder(), "START_DATE", "END_DATE")
 						.withBinder(new EnumTypeBinder(), "CONTROL_NAME", "SCHEDULE_STATUS")
-						.row().column("ID", 1L).column("START_DATE", new LocalDateTime(2014, 01, 01, 12, 0, 0)).column("END_DATE", new LocalDateTime(2014, 12, 31, 12, 0, 0)).column("CRON", "cron").column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("SCHEDULE_STATUS", ControlScheduleStatus.FINISHED).end()
+						.row().column("ID", 1L).column("START_DATE", new LocalDateTime().plusDays(1).withHourOfDay(12).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0)).column("END_DATE", new LocalDateTime(2014, 12, 31, 12, 0, 0)).column("CRON", "cron").column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("SCHEDULE_STATUS", ControlScheduleStatus.PENDING).end()
+						.row().column("ID", 2L).column("START_DATE", new LocalDateTime(2014, 01, 01, 12, 0, 0)).column("END_DATE", new LocalDateTime(2014, 12, 31, 12, 0, 0)).column("CRON", "cron").column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("SCHEDULE_STATUS", ControlScheduleStatus.RUNNING).end()
+						.row().column("ID", 3L).column("START_DATE", new LocalDateTime(2014, 01, 01, 12, 0, 0)).column("END_DATE", new LocalDateTime(2014, 12, 31, 12, 0, 0)).column("CRON", "cron").column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("SCHEDULE_STATUS", ControlScheduleStatus.PAUSED).end()
+						.row().column("ID", 4L).column("START_DATE", new LocalDateTime(2014, 01, 01, 12, 0, 0)).column("END_DATE", new LocalDateTime().minusDays(1).withHourOfDay(12).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0)).column("CRON", "cron").column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("SCHEDULE_STATUS", ControlScheduleStatus.FINISHED).end()
 						.useMetadata(false)
 						.build()
 		);
@@ -67,7 +71,7 @@ public class ControlScheduleDAOTest {
 		
         List<ControlScheduleVO> result = controlScheduleDAO.list();
 
-        Assert.assertEquals(1, result.size());
+        Assert.assertEquals(4, result.size());
     }
 	
 	@Test
@@ -80,7 +84,7 @@ public class ControlScheduleDAOTest {
         
         List<ControlScheduleVO> result = controlScheduleDAO.findByStatus(ControlScheduleStatus.PENDING);
 
-        Assert.assertEquals(1, result.size());
+        Assert.assertEquals(2, result.size());
     }
 	
 	@Test
@@ -92,6 +96,7 @@ public class ControlScheduleDAOTest {
 
         Assert.assertNotNull(controlSchedule);
         Assert.assertEquals(ControlName.PROJECTION_SEMANAL, controlSchedule.getControlName());
+        Assert.assertEquals(ControlScheduleStatus.PENDING, controlSchedule.getStatus());
         Assert.assertEquals("cron", controlSchedule.getCron());
     }
 	
@@ -107,10 +112,70 @@ public class ControlScheduleDAOTest {
 	
 	@Test
 	@Transactional
-    public void findByStatus_nonExistingResults() {
+    public void findByStatusList_existingResults() {
 		dbSetupTracker.skipNextLaunch();
 		
-        List<ControlScheduleVO> result = controlScheduleDAO.findByStatus(ControlScheduleStatus.RUNNING);
+        List<ControlScheduleVO> result = controlScheduleDAO.findByStatusList(Arrays.asList(ControlScheduleStatus.PENDING, ControlScheduleStatus.FINISHED));
+
+        Assert.assertEquals(2, result.size());
+    }
+	
+	@Test
+	@Transactional
+    public void findByStatusWithinPeriod_existingResults() {
+		dbSetupTracker.skipNextLaunch();
+		
+        List<ControlScheduleVO> result = controlScheduleDAO.findByStatusWithinPeriod(ControlScheduleStatus.RUNNING);
+
+        Assert.assertEquals(1, result.size());
+    }
+	
+	@Test
+	@Transactional
+    public void findByStatusListWithinPeriod_existingResults() {
+		dbSetupTracker.skipNextLaunch();
+		
+        List<ControlScheduleVO> result = controlScheduleDAO.findByStatusListWithinPeriod(Arrays.asList(ControlScheduleStatus.PAUSED, ControlScheduleStatus.RUNNING));
+
+        Assert.assertEquals(2, result.size());
+    }
+	
+	@Test
+	@Transactional
+    public void findByStatusWithinPeriod_nonExistingResults() {
+		dbSetupTracker.skipNextLaunch();
+		
+        List<ControlScheduleVO> result = controlScheduleDAO.findByStatusWithinPeriod(ControlScheduleStatus.PENDING);
+
+        Assert.assertEquals(0, result.size());
+    }
+	
+	@Test
+	@Transactional
+    public void findByStatusAfterPeriod_existingResults() {
+		dbSetupTracker.skipNextLaunch();
+		
+        List<ControlScheduleVO> result = controlScheduleDAO.findByStatusAfterPeriod(ControlScheduleStatus.FINISHED);
+
+        Assert.assertEquals(1, result.size());
+    }
+	
+	@Test
+	@Transactional
+    public void findByStatusListAfterPeriod_existingResults() {
+		dbSetupTracker.skipNextLaunch();
+		
+        List<ControlScheduleVO> result = controlScheduleDAO.findByStatusListAfterPeriod(Arrays.asList(ControlScheduleStatus.FINISHED));
+
+        Assert.assertEquals(1, result.size());
+    }
+	
+	@Test
+	@Transactional
+    public void findByStatusAfterPeriod_nonExistingResults() {
+		dbSetupTracker.skipNextLaunch();
+		
+        List<ControlScheduleVO> result = controlScheduleDAO.findByStatusAfterPeriod(ControlScheduleStatus.RUNNING);
 
         Assert.assertEquals(0, result.size());
     }
@@ -122,11 +187,9 @@ public class ControlScheduleDAOTest {
 		
         List<ControlScheduleVO> result = controlScheduleDAO.findByStatus(ControlScheduleStatus.RUNNING);
 
-        Assert.assertEquals(1, result.size());
-        Assert.assertEquals(new LocalDateTime(2014, 01, 01, 12, 0, 0), result.get(0).getStart());
-        Assert.assertEquals(new LocalDateTime(2014, 12, 31, 12, 0, 0), result.get(0).getEnd());
+        Assert.assertEquals(2, result.size());
         
-        result = controlScheduleDAO.findByStatus(ControlScheduleStatus.FINISHED);
+        result = controlScheduleDAO.findByStatus(ControlScheduleStatus.PENDING);
 
         Assert.assertEquals(0, result.size());
     }
@@ -135,15 +198,15 @@ public class ControlScheduleDAOTest {
 	@Transactional
     public void updateStatus_statusIsChangedAndDatesRemainEquals() {
 		ControlScheduleVO controlScheduleVO = controlScheduleDAO.findById(1L);
-		Assert.assertEquals(ControlScheduleStatus.FINISHED, controlScheduleVO.getStatus());
-		Assert.assertEquals(new LocalDateTime(2014, 01, 01, 12, 0, 0), controlScheduleVO.getStart());
+		Assert.assertEquals(ControlScheduleStatus.PENDING, controlScheduleVO.getStatus());
+		Assert.assertEquals(new LocalDateTime().plusDays(1).withHourOfDay(12).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0), controlScheduleVO.getStart());
         Assert.assertEquals(new LocalDateTime(2014, 12, 31, 12, 0, 0), controlScheduleVO.getEnd());
 		
 		controlScheduleDAO.updateStatus(1L, ControlScheduleStatus.RUNNING);
 		
 		controlScheduleVO = controlScheduleDAO.findById(1L);
 		Assert.assertEquals(ControlScheduleStatus.RUNNING, controlScheduleVO.getStatus());
-		Assert.assertEquals(new LocalDateTime(2014, 01, 01, 12, 0, 0), controlScheduleVO.getStart());
+		Assert.assertEquals(new LocalDateTime().plusDays(1).withHourOfDay(12).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0), controlScheduleVO.getStart());
         Assert.assertEquals(new LocalDateTime(2014, 12, 31, 12, 0, 0), controlScheduleVO.getEnd());
     }
 }

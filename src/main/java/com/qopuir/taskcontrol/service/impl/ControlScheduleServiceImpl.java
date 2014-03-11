@@ -1,5 +1,7 @@
 package com.qopuir.taskcontrol.service.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qopuir.taskcontrol.dao.ControlScheduleDAO;
 import com.qopuir.taskcontrol.entities.ControlScheduleVO;
+import com.qopuir.taskcontrol.entities.enums.ControlScheduleAction;
 import com.qopuir.taskcontrol.entities.enums.ControlScheduleStatus;
 import com.qopuir.taskcontrol.service.ControlScheduleService;
 import com.qopuir.taskcontrol.workflow.ControlScheduleWorkflow;
@@ -35,95 +38,60 @@ public class ControlScheduleServiceImpl implements ControlScheduleService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public ControlScheduleVO findById(Long controlId) {
-		return controlScheduleDAO.findById(controlId);
+	public ControlScheduleVO findById(Long controlScheduleId) {
+		return controlScheduleDAO.findById(controlScheduleId);
 	}
 	
 	@Override
     @Transactional(readOnly = true)
-    public List<ControlScheduleVO> findReadyToRun() {
-		List<ControlScheduleVO> foundControlSchedules = controlScheduleDAO.findByStatus(ControlScheduleStatus.PENDING);
+    public List<ControlScheduleVO> findReadyToStart() {
+		List<ControlScheduleVO> foundControlSchedules = controlScheduleDAO.findByStatusListWithinPeriod(Arrays.asList(ControlScheduleStatus.PENDING, ControlScheduleStatus.RUNNING));
 		
-		if (foundControlSchedules != null) {
-			foundControlSchedules.addAll(controlScheduleDAO.findByStatus(ControlScheduleStatus.RUNNING));
-		} else {
-			foundControlSchedules = controlScheduleDAO.findByStatus(ControlScheduleStatus.RUNNING);
-		}
-    	
 		return foundControlSchedules;
     }
 	
 	@Override
     @Transactional(readOnly = true)
-    public List<ControlScheduleVO> findReadyToFinish() {
-		List<ControlScheduleVO> foundControlSchedules = controlScheduleDAO.findByStatus(ControlScheduleStatus.PAUSED);
-		
-		if (foundControlSchedules != null) {
-			foundControlSchedules.addAll(controlScheduleDAO.findByStatus(ControlScheduleStatus.FINISHED));
-		} else {
-			foundControlSchedules = controlScheduleDAO.findByStatus(ControlScheduleStatus.FINISHED);
-		}
-    	
-		return foundControlSchedules;
+    public List<ControlScheduleVO> findReadyToStop() {
+		return union(controlScheduleDAO.findByStatusListWithinPeriod(Arrays.asList(ControlScheduleStatus.PAUSED,ControlScheduleStatus.FINISHED)),
+				controlScheduleDAO.findByStatusListAfterPeriod(Arrays.asList(ControlScheduleStatus.PAUSED, ControlScheduleStatus.RUNNING, ControlScheduleStatus.FINISHED)));
     }
 	
 	@Override
 	@Transactional
-	public void start(Long controlId) {
-		ControlScheduleVO controlSchedule = controlScheduleDAO.findById(controlId);
+	public void start(Long controlScheduleId) {
+		executeAction(controlScheduleId, ControlScheduleAction.START);
+	}
+	
+	@Override
+	@Transactional
+	public void stop(Long controlScheduleId) {
+		executeAction(controlScheduleId, ControlScheduleAction.STOP);
+	}
+	
+	@Override
+	@Transactional
+	public void executeAction(Long controlScheduleId, ControlScheduleAction action) {
+		ControlScheduleVO controlSchedule = controlScheduleDAO.findById(controlScheduleId);
 		
-		if (controlSchedule != null && controlScheduleWorkflow.checkAction(controlSchedule.getStatus(), ControlScheduleStatus.RUNNING)) {
-			controlScheduleDAO.updateStatus(controlId, ControlScheduleStatus.RUNNING);
+		if (controlSchedule != null && controlScheduleWorkflow.checkAction(controlSchedule, action)) {
+			controlScheduleDAO.updateStatus(controlScheduleId, controlScheduleWorkflow.getNextStatus(controlSchedule.getStatus(), action));
 		}
 	}
 	
-	@Override
-	@Transactional
-	public void start(List<ControlScheduleVO> controlSchedules) {
-		for (ControlScheduleVO controlSchedule : controlSchedules) {
-			if (controlScheduleWorkflow.checkAction(controlSchedule.getStatus(), ControlScheduleStatus.RUNNING)) {
-				controlScheduleDAO.updateStatus(controlSchedule.getId(), ControlScheduleStatus.RUNNING);
-			}
-		}
-	}
-	
-	@Override
-	@Transactional
-	public void pause(Long controlId) {
-		ControlScheduleVO controlSchedule = controlScheduleDAO.findById(controlId);
-		
-		if (controlSchedule != null && controlScheduleWorkflow.checkAction(controlSchedule.getStatus(), ControlScheduleStatus.PAUSED)) {
-			controlScheduleDAO.updateStatus(controlId, ControlScheduleStatus.PAUSED);
-		}
-	}
-	
-	@Override
-	@Transactional
-	public void resume(Long controlId) {
-		ControlScheduleVO controlSchedule = findById(controlId);
-		
-		if (controlSchedule != null && controlScheduleWorkflow.checkAction(controlSchedule.getStatus(), ControlScheduleStatus.RUNNING)) {
-        	controlScheduleDAO.updateStatus(controlId, ControlScheduleStatus.RUNNING);
-    	}
-	}
-	
-	@Override
-	@Transactional
-	public void finish(Long controlId) {
-		ControlScheduleVO controlSchedule = controlScheduleDAO.findById(controlId);
-		
-		if (controlSchedule != null && controlScheduleWorkflow.checkAction(controlSchedule.getStatus(), ControlScheduleStatus.FINISHED)) {
-			controlScheduleDAO.updateStatus(controlId, ControlScheduleStatus.FINISHED);
-		}
-	}
-	
-	@Override
-	@Transactional
-	public void finish(List<ControlScheduleVO> controlSchedules) {
-		for (ControlScheduleVO controlSchedule : controlSchedules) {
-			if (controlScheduleWorkflow.checkAction(controlSchedule.getStatus(), ControlScheduleStatus.FINISHED)) {
-				controlScheduleDAO.updateStatus(controlSchedule.getId(), ControlScheduleStatus.FINISHED);
-			}
-		}
-	}
+	private List<ControlScheduleVO> union(final List<ControlScheduleVO> list1, final List<ControlScheduleVO> list2) {
+        ArrayList<ControlScheduleVO> result = null;
+        
+        if (list1 != null) {
+        	result = new ArrayList<ControlScheduleVO>(list1);
+        } else {
+        	result = new ArrayList<ControlScheduleVO>();
+        }
+        
+        if (list2 != null) {
+        	result.addAll(list2);
+        }
+        
+        return result;
+    }
 }
