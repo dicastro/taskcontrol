@@ -51,10 +51,10 @@ public class ControlScheduleDAOTest {
 						.columns("ID", "START_DATE", "END_DATE", "CRON", "CONTROL_NAME", "SCHEDULE_STATUS")
 						.withBinder(new LocalDateTimeBinder(), "START_DATE", "END_DATE")
 						.withBinder(new EnumTypeBinder(), "CONTROL_NAME", "SCHEDULE_STATUS")
-						.row().column("ID", 1L).column("START_DATE", new LocalDateTime().plusDays(1).withHourOfDay(12).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0)).column("END_DATE", new LocalDateTime(2014, 12, 31, 12, 0, 0)).column("CRON", "cron").column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("SCHEDULE_STATUS", ControlScheduleStatus.PENDING).end()
-						.row().column("ID", 2L).column("START_DATE", new LocalDateTime(2014, 01, 01, 12, 0, 0)).column("END_DATE", new LocalDateTime(2014, 12, 31, 12, 0, 0)).column("CRON", "cron").column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("SCHEDULE_STATUS", ControlScheduleStatus.RUNNING).end()
-						.row().column("ID", 3L).column("START_DATE", new LocalDateTime(2014, 01, 01, 12, 0, 0)).column("END_DATE", new LocalDateTime(2014, 12, 31, 12, 0, 0)).column("CRON", "cron").column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("SCHEDULE_STATUS", ControlScheduleStatus.PAUSED).end()
-						.row().column("ID", 4L).column("START_DATE", new LocalDateTime(2014, 01, 01, 12, 0, 0)).column("END_DATE", new LocalDateTime().minusDays(1).withHourOfDay(12).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0)).column("CRON", "cron").column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("SCHEDULE_STATUS", ControlScheduleStatus.FINISHED).end()
+						.row().column("ID", 1L).column("START_DATE", new LocalDateTime().plusDays(1).withHourOfDay(12).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0)).column("END_DATE", new LocalDateTime(2014, 12, 31, 12, 0, 0)).column("CRON", "*/10 * * * * ?").column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("SCHEDULE_STATUS", ControlScheduleStatus.PENDING).end()
+						.row().column("ID", 2L).column("START_DATE", new LocalDateTime(2014, 01, 01, 12, 0, 0)).column("END_DATE", new LocalDateTime(2014, 12, 31, 12, 0, 0)).column("CRON", "*/10 * * * * ?").column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("SCHEDULE_STATUS", ControlScheduleStatus.RUNNING).end()
+						.row().column("ID", 3L).column("START_DATE", new LocalDateTime(2014, 01, 01, 12, 0, 0)).column("END_DATE", new LocalDateTime(2014, 12, 31, 12, 0, 0)).column("CRON", "*/10 * * * * ?").column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("SCHEDULE_STATUS", ControlScheduleStatus.PAUSED).end()
+						.row().column("ID", 4L).column("START_DATE", new LocalDateTime(2014, 01, 01, 12, 0, 0)).column("END_DATE", new LocalDateTime().minusDays(1).withHourOfDay(12).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0)).column("CRON", "*/10 * * * * ?").column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("SCHEDULE_STATUS", ControlScheduleStatus.FINISHED).end()
 						.useMetadata(false)
 						.build()
 		);
@@ -77,7 +77,7 @@ public class ControlScheduleDAOTest {
 	@Test
 	@Transactional
     public void create() {
-		ControlScheduleVO newControlSchedule = new ControlScheduleVO().setStart(new LocalDateTime(2014, 01, 01, 12, 0, 0)).setEnd(new LocalDateTime(2014, 12, 31, 12, 0, 0)).setCron("cron").setControlName(ControlName.PROJECTION_MENSUAL);
+		ControlScheduleVO newControlSchedule = new ControlScheduleVO().setStart(new LocalDateTime(2014, 01, 01, 12, 0, 0)).setEnd(new LocalDateTime(2014, 12, 31, 12, 0, 0)).setCron("*/10 * * * * ?").setControlName(ControlName.PROJECTION_MENSUAL);
 		controlScheduleDAO.create(newControlSchedule);
 		
         Assert.assertNotNull(newControlSchedule.getId());
@@ -97,7 +97,7 @@ public class ControlScheduleDAOTest {
         Assert.assertNotNull(controlSchedule);
         Assert.assertEquals(ControlName.PROJECTION_SEMANAL, controlSchedule.getControlName());
         Assert.assertEquals(ControlScheduleStatus.PENDING, controlSchedule.getStatus());
-        Assert.assertEquals("cron", controlSchedule.getCron());
+        Assert.assertEquals("*/10 * * * * ?", controlSchedule.getCron());
     }
 	
 	@Test

@@ -62,54 +62,39 @@
 		<property name="triggers">
 			<list>
 				<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-					<property name="jobDetail" ref="taskControlStartJobDetail" />
-					<property name="cronExpression" value="*/10 * * * * ?" />
+					<property name="jobDetail" ref="taskControlMainJob" />
+					<property name="cronExpression" value="*/20 * * * * ?" />
 				</bean>
-				<!--
-				<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-					<property name="jobDetail" ref="taskControlStartStopJobDetail" />
-					<property name="cronExpression" value="*/10 * * * * ?" />
-				</bean>
-				-->
 			</list>
 		</property>
 	</bean>
 
-	<bean id="taskControlStartJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
-		<property name="jobClass" value="com.qopuir.taskcontrol.quartz.TaskControlJobLauncherDetails" />
-		<property name="group" value="taskcontrol" />
+	<bean id="jobClassFactory" class="com.qopuir.taskcontrol.quartz.jobs.JobClassFactory">
+		<property name="map">
+			<map>
+				<entry key="PROJECTION_SEMANAL" value="com.qopuir.taskcontrol.quartz.jobs.ProjectionSemanalJob" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="taskControlMainJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass" value="com.qopuir.taskcontrol.quartz.TaskControlMainJob" />
+		<property name="group" value="taskcontrol-main" />
 		<property name="jobDataAsMap">
 			<map>
 				<entry key="jobOperator" value-ref="jobOperator" />
+				<entry key="jobClassFactory" value-ref="jobClassFactory" />
 				<entry key="controlScheduleService" value-ref="controlScheduleServiceImpl" />
+				<entry key="jobGroupName" value="taskcontrol-job" />
 			</map>
 		</property>
 	</bean>
-	<batch:job id="taskControlStartJob" job-repository="jobRepository">
-		<batch:step id="processControlSchedulesWaitingToRun">
+
+	<batch:job id="projection_semanal" job-repository="jobRepository">
+		<batch:step id="projectionSemanalStep1">
 			<batch:tasklet transaction-manager="transactionManager">
-				<bean class="com.qopuir.taskcontrol.quartz.tasklets.ControlSchedulesWaitingToRunTasklet">
-					<property name="controlScheduleService" ref="controlScheduleServiceImpl" />
-				</bean>
+				<bean class="com.qopuir.taskcontrol.quartz.tasklets.ProjectionSemanalTasklet" />
 			</batch:tasklet>
 		</batch:step>
 	</batch:job>
-
-	<!--
-	<bean id="taskControlStopJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
-		<property name="jobClass" value="com.qopuir.taskcontrol.quartz.TaskControlJobLauncherDetails" />
-		<property name="group" value="taskcontrol" />
-		<property name="jobDataAsMap">
-			<map>
-				<entry key="jobName" value="taskControlStopJob" />
-				<entry key="jobLocator" value-ref="jobRegistry" />
-				<entry key="jobLauncher" value-ref="jobLauncher" />
-			</map>
-		</property>
-	</bean>
-	<batch:job id="taskControlStopJob">
-		<batch:step id="findControlSchedulesWaitingToFinish" next="finishFoundControlSchedulesThatAreRunning" />
-		<batch:step id="runFoundControlSchedulesThatAreNotRunningYet" />
-	</batch:job>
-	-->
 </beans>
