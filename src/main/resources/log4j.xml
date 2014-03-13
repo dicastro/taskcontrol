@@ -53,6 +53,20 @@
     	<level value="info" />
     </logger>
     
+    <logger name="com.gargoylesoftware.htmlunit">
+        <level value="info" />
+    </logger>
+    
+    <logger name="com.gargoylesoftware.htmlunit">
+        <level value="info" />
+    </logger>
+    
+    <logger name="org.apache.http">
+    	<level value="info" />
+    </logger>
+    
+    
+    
     <logger name="com.qopuir.taskcontrol.dao" additivity="false">
         <level value="info" />
     </logger>

@@ -6,6 +6,10 @@ import static com.qopuir.taskcontrol.quartz.constants.JobConstants.PARAM_JOB_NAM
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepContribution;
@@ -36,12 +40,30 @@ public class ProjectionSemanalTasklet implements Tasklet {
 		
 		for (UserVO userVO : controlUsers) {
 			logger.debug("Checking projection of user {}", userVO.getUsername());
+			
 			// TODO (qopuir): use selenium to access projection web and check if all required days are completed
+			boolean isOk = checkProjection();
 			
 			// TODO (qopuir): if there is any missing day an email will be send to that user
 		}
 		
 		return RepeatStatus.FINISHED;
+	}
+	
+	private boolean checkProjection() {
+		WebDriver driver = new HtmlUnitDriver();
+        driver.get("http://www.google.com");
+
+        WebElement element = driver.findElement(By.name("q"));
+        element.sendKeys("Cheese!");
+
+        element.submit();
+
+        logger.debug("Page title is: {}", driver.getTitle());
+
+        driver.quit();
+        
+        return true;
 	}
 	
 	private String getParameter(ChunkContext context, String paramName) {
