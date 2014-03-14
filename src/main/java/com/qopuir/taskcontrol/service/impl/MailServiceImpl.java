@@ -1,64 +1,67 @@
 package com.qopuir.taskcontrol.service.impl;
 
+import java.util.Properties;
+
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 import com.qopuir.taskcontrol.entities.MailMessage;
-import com.qopuir.taskcontrol.sendgrid.SendGridParameters;
 import com.qopuir.taskcontrol.service.MailService;
 
 @Service
 public class MailServiceImpl implements MailService {
 	protected static Logger logger = LoggerFactory.getLogger(MailServiceImpl.class);
-	private RestTemplate restTemplate = new RestTemplate();
 	
-	@Value("${sendgrid.username}")
-	private String sendgridUsername;
+	@Value("${mail.host}")
+	private String mailHost;
 	
-	@Value("${sendgrid.apiKey}")
-	private String sendgridApiKey;
+	@Value("${mail.port}")
+	private String mailPort;
+	
+	@Value("${mail.username}")
+	private String mailUsername;
+	
+	@Value("${mail.password}")
+	private String mailPassword;
 	
 	@Override
-	public void send(MailMessage message) {
-		MultiValueMap<String, Object> vars = new LinkedMultiValueMap<String, Object>();
-		vars.add(SendGridParameters.API_USER, sendgridUsername);
-		vars.add(SendGridParameters.API_KEY, sendgridApiKey);
-		
-		if (message.getSenderName() != null) {
-			vars.add(SendGridParameters.SENDER_NAME, message.getSenderName());
+	public void send(MailMessage mail) {
+		Properties props = new Properties();
+		props.put("mail.smtp.host", mailHost);
+		props.put("mail.smtp.socketFactory.port", mailPort);
+		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.port", mailPort);
+ 
+		Session session = Session.getDefaultInstance(props, new Authenticator() {
+			@Override
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(mailUsername, mailPassword);
+			}
+		});
+ 
+		try {
+			Message message = new MimeMessage(session);
+			
+			message.setFrom(new InternetAddress(mail.getSenderEmail()));
+			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(mail.getReceiverEmail()));
+			message.setSubject(mail.getSubject());
+			message.setText(mail.getHtmlBody());
+ 
+			Transport.send(message);
+		} catch (MessagingException e) {
+			throw new RuntimeException(e);
 		}
-		
-		if (message.getSenderEmail() != null) {
-			vars.add(SendGridParameters.SENDER_EMAIL, message.getSenderEmail());
-		}
-		
-		if (message.getCcEmail() != null) {
-			vars.add(SendGridParameters.BLIND_COPY_EMAIL, message.getCcEmail());
-		}
-		
-		if (message.getSubject() != null) {
-			vars.add(SendGridParameters.SUBJECT, message.getSubject());
-		}
-		
-		vars.add(SendGridParameters.TEXT, "");
-		
-		if (message.getHtmlBody() != null) {
-			vars.add(SendGridParameters.HTML, message.getHtmlBody());
-		}
-		
-		if (message.getReceiverEmail() != null) {
-			vars.add(SendGridParameters.RECEIVER_EMAIL, message.getReceiverEmail());
-		}
-		
-		if (message.getReceiverName() != null) {
-			vars.add(SendGridParameters.RECEIVER_NAME, message.getReceiverName());
-		}
-		
-		restTemplate.postForLocation(SendGridParameters.URL, vars);
 	}
 }
