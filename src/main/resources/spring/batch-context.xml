@@ -90,6 +90,15 @@
 		</property>
 	</bean>
 
+	<bean id="mail-pph" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="IgnoreUnresolvablePlaceholders" value="true" />
+		<property name="locations">
+			<list>
+				<value>classpath:mail.properties</value>
+			</list>
+		</property>
+	</bean>
+	
 	<batch:job id="projection_semanal" job-repository="jobRepository">
 		<batch:step id="projectionSemanalStep1">
 			<batch:tasklet transaction-manager="transactionManager">
