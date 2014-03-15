@@ -8,19 +8,19 @@
         http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
-	<!-- JDBC job repository
+	<!-- JDBC job repository -->
 	<batch:job-repository id="jobRepository"
 		data-source="lazyConnectionDataSource"
 		transaction-manager="transactionManager"
 		isolation-level-for-create="REPEATABLE_READ"
 		table-prefix="BATCH_"
 		max-varchar-length="1000" />
-	-->
 
-	<!-- In-memory job repository -->
+	<!-- In-memory job repository
 	<bean id="jobRepository" class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">
 		<property name="transactionManager" ref="transactionManager" />
 	</bean>
+	-->
 
 	<bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
 		<property name="jobRepository" ref="jobRepository" />
@@ -38,17 +38,17 @@
 		<property name="jobRegistry" ref="jobRegistry" />
 	</bean>
 
-	<!-- In-memory job explorer -->
+	<!-- In-memory job explorer
 	<bean id="jobExplorer" class="org.springframework.batch.core.explore.support.MapJobExplorerFactoryBean">
 		<property name="repositoryFactory" ref="&amp;jobRepository" />
 	</bean>
-	<!--
-	JDBC job explorer
+	-->
+	
+	<!-- JDBC job explorer -->
 	<bean id="jobExplorer" class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean">
 		<property name="dataSource" ref="lazyConnectionDataSource" />
 		<property name="tablePrefix" value="BATCH_" />
 	</bean>
-	-->
 
 	<bean id="jobOperator" class="org.springframework.batch.core.launch.support.SimpleJobOperator">
 		<property name="jobRepository" ref="jobRepository" />
