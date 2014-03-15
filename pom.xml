@@ -216,6 +216,19 @@
 			<version>1.4.7</version>
 		</dependency>
 		
+		<!-- Thymeleaf templating system -->
+		<dependency>
+			<groupId>org.thymeleaf</groupId>
+			<artifactId>thymeleaf-spring3</artifactId>
+			<version>2.1.2.RELEASE</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
 		<!-- logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>

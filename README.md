@@ -8,6 +8,7 @@ Stack
 
 - Spring
 - Spring Batch
+- Thymeleaf
 - Jersey
 - MyBatis
 - DBSetup
