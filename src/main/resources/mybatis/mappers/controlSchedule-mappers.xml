@@ -7,18 +7,19 @@
 		<result column="END_DATE" property="end" javaType="org.joda.time.LocalDateTime" typeHandler="com.qopuir.taskcontrol.mybatis.typeHandlers.LocalDateTimeTypeHandler" />
 		<result column="CRON" property="cron" />
 		<result column="CONTROL_NAME" property="controlName" javaType="com.qopuir.taskcontrol.entities.enums.ControlName" typeHandler="com.qopuir.taskcontrol.mybatis.typeHandlers.ControlNameTypeHandler" />
+		<result column="DESCRIPTION" property="description" />
 		<result column="SCHEDULE_STATUS" property="status" javaType="com.qopuir.taskcontrol.entities.enums.ControlScheduleStatus" typeHandler="com.qopuir.taskcontrol.mybatis.typeHandlers.ControlScheduleStatusTypeHandler" />
 	</resultMap>
 
 	<insert id="create" parameterType="ControlUserVO" useGeneratedKeys="true">
-		INSERT INTO TASKCONTROL.CONTROL_SCHEDULES (START_DATE, END_DATE, CRON, CONTROL_NAME, SCHEDULE_STATUS)
-		VALUES (#{start,typeHandler=com.qopuir.taskcontrol.mybatis.typeHandlers.LocalDateTimeTypeHandler}, #{end,typeHandler=com.qopuir.taskcontrol.mybatis.typeHandlers.LocalDateTimeTypeHandler}, #{cron}, #{controlName,typeHandler=com.qopuir.taskcontrol.mybatis.typeHandlers.ControlNameTypeHandler}, 'PENDING')
+		INSERT INTO TASKCONTROL.CONTROL_SCHEDULES (START_DATE, END_DATE, CRON, CONTROL_NAME, DESCRIPTION, SCHEDULE_STATUS)
+		VALUES (#{start,typeHandler=com.qopuir.taskcontrol.mybatis.typeHandlers.LocalDateTimeTypeHandler}, #{end,typeHandler=com.qopuir.taskcontrol.mybatis.typeHandlers.LocalDateTimeTypeHandler}, #{cron}, #{controlName,typeHandler=com.qopuir.taskcontrol.mybatis.typeHandlers.ControlNameTypeHandler}, #{description}, 'PENDING')
 		<selectKey resultType="long" order="AFTER" keyProperty="id">
 	        SELECT LAST_INSERT_ID() AS ID
 	    </selectKey>
 	</insert>
 	
-	<sql id="controlScheduleColumns">ID, START_DATE, END_DATE, CRON, CONTROL_NAME, SCHEDULE_STATUS</sql>
+	<sql id="controlScheduleColumns">ID, START_DATE, END_DATE, CRON, CONTROL_NAME, DESCRIPTION, SCHEDULE_STATUS</sql>
 	
 	<select id="list" resultMap="controlScheduleMap">
 		SELECT <include refid="controlScheduleColumns"/>

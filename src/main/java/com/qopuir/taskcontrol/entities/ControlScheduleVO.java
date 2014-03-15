@@ -16,6 +16,7 @@ public class ControlScheduleVO {
 	private LocalDateTime end;
 	private String cron;
 	private ControlName controlName;
+	private String description;
 	private ControlScheduleStatus status;
 
 	public ControlScheduleVO() {
@@ -63,6 +64,15 @@ public class ControlScheduleVO {
 
 	public ControlScheduleVO setControlName(ControlName type) {
 		this.controlName = type;
+		return this;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public ControlScheduleVO setDescription(String description) {
+		this.description = description;
 		return this;
 	}
 
