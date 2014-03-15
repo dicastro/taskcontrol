@@ -8,8 +8,7 @@
         http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
-	<!--
-	JDBC job repository
+	<!-- JDBC job repository
 	<batch:job-repository id="jobRepository"
 		data-source="lazyConnectionDataSource"
 		transaction-manager="transactionManager"
@@ -69,21 +68,12 @@
 		</property>
 	</bean>
 
-	<bean id="jobClassFactory" class="com.qopuir.taskcontrol.quartz.jobs.JobClassFactory">
-		<property name="map">
-			<map>
-				<entry key="PROJECTION_SEMANAL" value="com.qopuir.taskcontrol.quartz.jobs.ProjectionSemanalJob" />
-			</map>
-		</property>
-	</bean>
-
 	<bean id="taskControlMainJob" class="org.springframework.scheduling.quartz.JobDetailBean">
 		<property name="jobClass" value="com.qopuir.taskcontrol.quartz.TaskControlMainJob" />
 		<property name="group" value="taskcontrol-main" />
 		<property name="jobDataAsMap">
 			<map>
 				<entry key="jobOperator" value-ref="jobOperator" />
-				<entry key="jobClassFactory" value-ref="jobClassFactory" />
 				<entry key="controlScheduleService" value-ref="controlScheduleServiceImpl" />
 				<entry key="jobGroupName" value="taskcontrol-job" />
 			</map>
@@ -95,6 +85,7 @@
 		<property name="locations">
 			<list>
 				<value>classpath:projectionSemanal.properties</value>
+				<value>classpath:projectionMensual.properties</value>
 			</list>
 		</property>
 	</bean>
@@ -103,6 +94,14 @@
 		<batch:step id="projectionSemanalStep1">
 			<batch:tasklet transaction-manager="transactionManager">
 				<bean class="com.qopuir.taskcontrol.quartz.tasklets.ProjectionSemanalTasklet" />
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	
+	<batch:job id="projection_mensual" job-repository="jobRepository">
+		<batch:step id="projectionMensualStep1">
+			<batch:tasklet transaction-manager="transactionManager">
+				<bean class="com.qopuir.taskcontrol.quartz.tasklets.ProjectionMensualTasklet" />
 			</batch:tasklet>
 		</batch:step>
 	</batch:job>
