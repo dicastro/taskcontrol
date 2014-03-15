@@ -8,4 +8,28 @@
 
 	<context:annotation-config />
 	<context:component-scan base-package="com.qopuir.taskcontrol.service, com.qopuir.taskcontrol.workflow" />
+
+	<bean id="mail-pph" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="IgnoreUnresolvablePlaceholders" value="true" />
+		<property name="locations">
+			<list>
+				<value>classpath:mail.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="emailTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
+		<property name="prefix" value="mail/" />
+		<property name="templateMode" value="HTML5" />
+		<property name="characterEncoding" value="UTF-8" />
+		<property name="order" value="1" />
+	</bean>
+
+	<bean id="templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+		<property name="templateResolvers">
+			<set>
+				<ref bean="emailTemplateResolver" />
+			</set>
+		</property>
+	</bean>
 </beans>

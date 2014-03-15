@@ -89,12 +89,12 @@
 			</map>
 		</property>
 	</bean>
-
-	<bean id="mail-pph" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	
+	<bean id="batch-pph" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="IgnoreUnresolvablePlaceholders" value="true" />
 		<property name="locations">
 			<list>
-				<value>classpath:mail.properties</value>
+				<value>classpath:projectionSemanal.properties</value>
 			</list>
 		</property>
 	</bean>

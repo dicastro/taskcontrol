@@ -19,6 +19,8 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import com.qopuir.taskcontrol.entities.MailMessage;
 import com.qopuir.taskcontrol.entities.UserVO;
@@ -29,12 +31,19 @@ import com.qopuir.taskcontrol.service.UserService;
 public class ProjectionSemanalTasklet implements Tasklet {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectionSemanalTasklet.class);
 	
+	@Value("${projectionSemanal.simulate}")
+	private Boolean simulate;
 	@Value("${projectionSemanal.url}")
 	private String projectionUrl;
 	@Value("${projectionSemanal.subject}")
 	private String mailSubject;
 	@Value("${projectionSemanal.from}")
 	private String mailFrom;
+	@Value("${projectionSemanal.mailTemplate}")
+	private String mailTemplate;
+	
+	@Autowired
+	private TemplateEngine templateEngine;
 	
 	@Autowired
 	MailService mailService;
@@ -55,11 +64,14 @@ public class ProjectionSemanalTasklet implements Tasklet {
 		for (UserVO userVO : controlUsers) {
 			logger.debug("Checking projection of user {}", userVO.getUsername());
 			
-			if (checkProjectionIncompleteUntilToday(userVO)) {
-				logger.warn("User <{}> has projection incomplete at {}. Sending an email to <{}>", userVO.getUsername(), getParameter(chunkContext, PARAM_EJECUTION_DATE), userVO.getEmail());
-				
-				// TODO (qopuir): read and process mail template
-				mailService.send(new MailMessage().setReceiverEmail(userVO.getEmail()).setSenderEmail(mailFrom).setSubject(mailSubject).setHtmlBody("Haz el projection"));
+			if (simulate) {
+				logger.info("Simulating...");
+			} else {
+				if (checkProjectionIncompleteUntilToday(userVO)) {
+					logger.warn("User <{}> has projection incomplete at {}. Sending an email to <{}>", userVO.getUsername(), getParameter(chunkContext, PARAM_EJECUTION_DATE), userVO.getEmail());
+					
+					mailService.send(new MailMessage().setReceiverEmail(userVO.getEmail()).setSenderEmail(mailFrom).setSubject(mailSubject).setHtmlBody(templateEngine.process(mailTemplate, new Context())));
+				}
 			}
 		}
 		

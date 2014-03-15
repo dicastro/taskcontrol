@@ -52,12 +52,12 @@ public class MailServiceImpl implements MailService {
 		});
  
 		try {
-			Message message = new MimeMessage(session);
+			MimeMessage message = new MimeMessage(session);
 			
 			message.setFrom(new InternetAddress(mail.getSenderEmail()));
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(mail.getReceiverEmail()));
 			message.setSubject(mail.getSubject());
-			message.setText(mail.getHtmlBody());
+			message.setText(mail.getHtmlBody(), "UTF-8", "HTML");
  
 			Transport.send(message);
 		} catch (MessagingException e) {
