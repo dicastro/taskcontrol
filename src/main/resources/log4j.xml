@@ -65,6 +65,10 @@
     	<level value="info" />
     </logger>
     
+    <logger name="org.thymeleaf">
+    	<level value="info" />
+    </logger>
+    
     
     
     <logger name="com.qopuir.taskcontrol.dao" additivity="false">

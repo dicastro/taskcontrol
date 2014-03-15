@@ -1,6 +1,5 @@
 package com.qopuir.taskcontrol.quartz;
 
-import static com.qopuir.taskcontrol.quartz.constants.JobConstants.JOB_OPERATOR;
 import static com.qopuir.taskcontrol.quartz.constants.JobConstants.PARAM_JOB_GROUP_NAME;
 import static com.qopuir.taskcontrol.quartz.constants.JobConstants.PARAM_JOB_NAME;
 import static com.qopuir.taskcontrol.quartz.constants.JobConstants.PARAM_JOB_SCHEDULE;
@@ -20,7 +19,6 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.scheduling.quartz.CronTriggerBean;
 import org.springframework.scheduling.quartz.JobDetailBean;
 import org.springframework.scheduling.quartz.QuartzJobBean;
@@ -28,15 +26,14 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 import com.qopuir.taskcontrol.entities.ControlScheduleVO;
 import com.qopuir.taskcontrol.entities.enums.ControlScheduleAction;
 import com.qopuir.taskcontrol.entities.enums.ControlScheduleStatus;
-import com.qopuir.taskcontrol.quartz.jobs.TaskControlJobLauncher;
+import com.qopuir.taskcontrol.quartz.jobs.JobClassFactory;
 import com.qopuir.taskcontrol.service.ControlScheduleService;
 
 public class TaskControlMainJob extends QuartzJobBean {
 	private static final Logger logger = LoggerFactory.getLogger(TaskControlMainJob.class);
 	
-	private JobOperator jobOperator;
-	
 	private ControlScheduleService controlScheduleService;
+	private JobClassFactory jobClassFactory;
 	
 	@Override
 	protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
@@ -136,10 +133,9 @@ public class TaskControlMainJob extends QuartzJobBean {
 		JobDetailBean jobDetail = new JobDetailBean();
     	jobDetail.setName(getCronJobName(controlScheduleVO));
     	jobDetail.setGroup(groupName);
-    	jobDetail.setJobClass(TaskControlJobLauncher.class);
+    	jobDetail.setJobClass(jobClassFactory.getJobClass(controlScheduleVO.getControlName()));
     	
     	JobDataMap jobParameters = new JobDataMap();
-    	jobParameters.put(JOB_OPERATOR, jobOperator);
     	jobParameters.put(PARAM_JOB_NAME, controlScheduleVO.getControlName().getLiteral().toLowerCase());
     	jobParameters.put(PARAM_JOB_SCHEDULE, controlScheduleVO.getId());
     	
@@ -182,8 +178,8 @@ public class TaskControlMainJob extends QuartzJobBean {
 	public void setControlScheduleService(ControlScheduleService controlScheduleService) {
 		this.controlScheduleService = controlScheduleService;
 	}
-
-	public void setJobOperator(JobOperator jobOperator) {
-		this.jobOperator = jobOperator;
+	
+	public void setJobClassFactory(JobClassFactory jobClassFactory) {
+		this.jobClassFactory = jobClassFactory;
 	}
 }

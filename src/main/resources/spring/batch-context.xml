@@ -57,7 +57,10 @@
 		<property name="jobExplorer" ref="jobExplorer" />
 	</bean>
 
+	<bean id="jobFactory" class="com.qopuir.taskcontrol.quartz.AutowiringSpringBeanJobFactory" />
+
 	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="jobFactory" ref="jobFactory" />
 		<property name="triggers">
 			<list>
 				<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
@@ -68,13 +71,22 @@
 		</property>
 	</bean>
 
+	<bean id="jobClassFactory" class="com.qopuir.taskcontrol.quartz.jobs.JobClassFactory">
+		<property name="map">
+			<map>
+				<entry key="PROJECTION_SEMANAL" value="com.qopuir.taskcontrol.quartz.jobs.ProjectionSemanalJob" />
+				<entry key="PROJECTION_MENSUAL" value="com.qopuir.taskcontrol.quartz.jobs.ProjectionMensualJob" />
+			</map>
+		</property>
+	</bean>
+
 	<bean id="taskControlMainJob" class="org.springframework.scheduling.quartz.JobDetailBean">
 		<property name="jobClass" value="com.qopuir.taskcontrol.quartz.TaskControlMainJob" />
 		<property name="group" value="taskcontrol-main" />
 		<property name="jobDataAsMap">
 			<map>
-				<entry key="jobOperator" value-ref="jobOperator" />
 				<entry key="controlScheduleService" value-ref="controlScheduleServiceImpl" />
+				<entry key="jobClassFactory" value-ref="jobClassFactory" />
 				<entry key="jobGroupName" value="taskcontrol-job" />
 			</map>
 		</property>
@@ -90,18 +102,10 @@
 		</property>
 	</bean>
 	
-	<batch:job id="projection_semanal" job-repository="jobRepository">
-		<batch:step id="projectionSemanalStep1">
+	<batch:job id="sendMail" job-repository="jobRepository">
+		<batch:step id="sendMailStep">
 			<batch:tasklet transaction-manager="transactionManager">
-				<bean class="com.qopuir.taskcontrol.quartz.tasklets.ProjectionSemanalTasklet" />
-			</batch:tasklet>
-		</batch:step>
-	</batch:job>
-	
-	<batch:job id="projection_mensual" job-repository="jobRepository">
-		<batch:step id="projectionMensualStep1">
-			<batch:tasklet transaction-manager="transactionManager">
-				<bean class="com.qopuir.taskcontrol.quartz.tasklets.ProjectionMensualTasklet" />
+				<bean class="com.qopuir.taskcontrol.quartz.tasklets.SendMailTasklet" />
 			</batch:tasklet>
 		</batch:step>
 	</batch:job>
