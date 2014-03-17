@@ -8,7 +8,7 @@ import com.ninja_squad.dbsetup.operation.Operation;
 import com.qopuir.taskcontrol.entities.enums.ControlName;
 
 public class CommonOperations {
-	public static final Operation DELETE_ALL = deleteAllFrom("USER_CONTROLS", "USERS", "CONTROL_SCHEDULES", "CONTROLS");
+	public static final Operation DELETE_ALL = deleteAllFrom("USER_CONTROLS", "USERS", "CONTROL_SCHEDULE_PARAMS", "CONTROL_SCHEDULES", "CONTROL_PARAMS", "CONTROLS");
 	
 	public static final Operation INSERT_REFERENCE_DATA =
 	        sequenceOf(

@@ -5,13 +5,17 @@
 	<typeAliases>
 		<typeAlias type="com.qopuir.taskcontrol.entities.UserVO" alias="UserVO" />
 		<typeAlias type="com.qopuir.taskcontrol.entities.ControlVO" alias="ControlVO" />
+		<typeAlias type="com.qopuir.taskcontrol.entities.ControlParamVO" alias="ControlParamVO" />
 		<typeAlias type="com.qopuir.taskcontrol.entities.ControlUserVO" alias="ControlUserVO" />
 		<typeAlias type="com.qopuir.taskcontrol.entities.ControlScheduleVO" alias="ControlScheduleVO" />
+		<typeAlias type="com.qopuir.taskcontrol.entities.ControlScheduleParamVO" alias="ControlScheduleParamVO" />
 	</typeAliases>
 	<mappers>
 		<mapper resource="mybatis/mappers/user-mappers.xml" />
 		<mapper resource="mybatis/mappers/controlUser-mappers.xml" />
 		<mapper resource="mybatis/mappers/control-mappers.xml" />
+		<mapper resource="mybatis/mappers/controlParam-mappers.xml" />
 		<mapper resource="mybatis/mappers/controlSchedule-mappers.xml" />
+		<mapper resource="mybatis/mappers/controlScheduleParam-mappers.xml" />
 	</mappers>
 </configuration>

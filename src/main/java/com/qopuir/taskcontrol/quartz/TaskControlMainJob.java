@@ -43,73 +43,81 @@ public class TaskControlMainJob extends QuartzJobBean {
 		
 		List<ControlScheduleVO> controlSchedulesToRun = controlScheduleService.findReadyToStart();
 
-		for (ControlScheduleVO controlScheduleVO : controlSchedulesToRun) {
-			logger.debug("ControlSchedule to run: {}", controlScheduleVO.toString());
-			
-			try {
-				if (controlScheduleVO.getStatus() == ControlScheduleStatus.RUNNING) {
-					int triggerState = scheduler.getTriggerState(getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
-					
-					if (triggerState == Trigger.STATE_NONE) {
-						logger.info("Scheduling Trigger <{},{}> ...", getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
+		if (controlSchedulesToRun.isEmpty()) {
+			logger.info("There are no control schedules to run");
+		} else {
+			for (ControlScheduleVO controlScheduleVO : controlSchedulesToRun) {
+				logger.debug("ControlSchedule to run: {}", controlScheduleVO.toString());
+				
+				try {
+					if (controlScheduleVO.getStatus() == ControlScheduleStatus.RUNNING) {
+						int triggerState = scheduler.getTriggerState(getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
 						
-						JobDetail jobDetail = scheduler.getJobDetail(getCronJobName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
-						
-						if (jobDetail == null) {
-							jobDetail = getJobDetail(controlScheduleVO, mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
-							scheduler.scheduleJob(jobDetail, getCronTrigger(controlScheduleVO, mainJobParameters.getString(PARAM_JOB_GROUP_NAME), jobDetail));
+						if (triggerState == Trigger.STATE_NONE) {
+							logger.info("Scheduling Trigger <{},{}> ...", getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
+							
+							JobDetail jobDetail = scheduler.getJobDetail(getCronJobName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
+							
+							if (jobDetail == null) {
+								jobDetail = getJobDetail(controlScheduleVO, mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
+								scheduler.scheduleJob(jobDetail, getCronTrigger(controlScheduleVO, mainJobParameters.getString(PARAM_JOB_GROUP_NAME), jobDetail));
+							} else {
+								scheduler.scheduleJob(getCronTrigger(controlScheduleVO, mainJobParameters.getString(PARAM_JOB_GROUP_NAME), getCronJobName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME)));
+							}
 						} else {
-							scheduler.scheduleJob(getCronTrigger(controlScheduleVO, mainJobParameters.getString(PARAM_JOB_GROUP_NAME), getCronJobName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME)));
+							logger.info("Trigger <{},{}> is already runnning", getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
+							
+							CronTrigger trigger = (CronTrigger) scheduler.getTrigger(getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
+							
+							if (!trigger.getCronExpression().equals(controlScheduleVO.getCron())) {
+								logger.debug("Rescheduling Trigger <{},{}> to {} ...", getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME), controlScheduleVO.getCron());
+								
+								scheduler.rescheduleJob(getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME), getCronTrigger(controlScheduleVO, mainJobParameters.getString(PARAM_JOB_GROUP_NAME), getCronJobName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME)));
+							}
 						}
 					} else {
-						logger.info("Trigger <{},{}> is already runnning", getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
+						logger.info("Scheduling Trigger <{},{}> ...", getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
 						
-						CronTrigger trigger = (CronTrigger) scheduler.getTrigger(getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
-						
-						if (!trigger.getCronExpression().equals(controlScheduleVO.getCron())) {
-							logger.debug("Rescheduling Trigger <{},{}> to {} ...", getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME), controlScheduleVO.getCron());
-							
-							scheduler.rescheduleJob(getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME), getCronTrigger(controlScheduleVO, mainJobParameters.getString(PARAM_JOB_GROUP_NAME), getCronJobName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME)));
-						}
+						JobDetail jobDetail = getJobDetail(controlScheduleVO, mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
+						scheduler.scheduleJob(jobDetail, getCronTrigger(controlScheduleVO, mainJobParameters.getString(PARAM_JOB_GROUP_NAME), jobDetail));
 					}
-				} else {
-					logger.info("Scheduling Trigger <{},{}> ...", getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
 					
-					JobDetail jobDetail = getJobDetail(controlScheduleVO, mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
-					scheduler.scheduleJob(jobDetail, getCronTrigger(controlScheduleVO, mainJobParameters.getString(PARAM_JOB_GROUP_NAME), jobDetail));
+					controlScheduleService.start(controlScheduleVO.getId());
+				} catch (SchedulerException e) {
+					logger.error(e.getMessage(), e);
 				}
-				
-				controlScheduleService.start(controlScheduleVO.getId());
-			} catch (SchedulerException e) {
-				logger.error(e.getMessage(), e);
 			}
 		}
 		
-		List<ControlScheduleVO> controlSchedulesToFinish = controlScheduleService.findReadyToStop();
+		List<ControlScheduleVO> controlSchedulesToStop = controlScheduleService.findReadyToStop();
 
-		for (ControlScheduleVO controlScheduleVO : controlSchedulesToFinish) {
-			logger.debug("ControlSchedule to stop: {}", controlScheduleVO.toString());
-			
-			try {
-				int triggerState = scheduler.getTriggerState(getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
+		if (controlSchedulesToStop.isEmpty()) {
+			logger.info("There are no control schedules to stop");
+		} else {
+			for (ControlScheduleVO controlScheduleVO : controlSchedulesToStop) {
+				logger.debug("ControlSchedule to stop: {}", controlScheduleVO.toString());
 				
-				if (triggerState != Trigger.STATE_NONE) {
-					logger.info("Stopping Trigger <{},{}> ...", getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
+				try {
+					int triggerState = scheduler.getTriggerState(getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
 					
-					scheduler.unscheduleJob(getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
-				} else {
-					logger.info("Trigger <{},{}> is already stopped", getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
+					if (triggerState != Trigger.STATE_NONE) {
+						logger.info("Stopping Trigger <{},{}> ...", getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
+						
+						scheduler.unscheduleJob(getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
+					} else {
+						logger.info("Trigger <{},{}> is already stopped", getCronTriggerName(controlScheduleVO), mainJobParameters.getString(PARAM_JOB_GROUP_NAME));
+					}
+					
+					LocalDateTime executionTime = new LocalDateTime().withMillisOfSecond(0);
+					
+					if (controlScheduleVO.getStatus() == ControlScheduleStatus.PAUSED && executionTime.isAfter(controlScheduleVO.getStart()) && executionTime.isBefore(controlScheduleVO.getEnd())) {
+						controlScheduleService.executeAction(controlScheduleVO.getId(), ControlScheduleAction.PAUSE);
+					} else {
+						controlScheduleService.stop(controlScheduleVO.getId());
+					}
+				} catch (SchedulerException e) {
+					logger.error(e.getMessage(), e);
 				}
-				
-				LocalDateTime executionTime = new LocalDateTime().withMillisOfSecond(0);
-				
-				if (controlScheduleVO.getStatus() == ControlScheduleStatus.PAUSED && executionTime.isAfter(controlScheduleVO.getStart()) && executionTime.isBefore(controlScheduleVO.getEnd())) {
-					controlScheduleService.executeAction(controlScheduleVO.getId(), ControlScheduleAction.PAUSE);
-				} else {
-					controlScheduleService.stop(controlScheduleVO.getId());
-				}
-			} catch (SchedulerException e) {
-				logger.error(e.getMessage(), e);
 			}
 		}
 	}

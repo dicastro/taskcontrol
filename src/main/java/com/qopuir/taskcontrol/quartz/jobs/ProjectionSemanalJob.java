@@ -34,28 +34,19 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
+import com.qopuir.taskcontrol.entities.ControlScheduleParamVO;
 import com.qopuir.taskcontrol.entities.UserVO;
 import com.qopuir.taskcontrol.entities.enums.ControlName;
+import com.qopuir.taskcontrol.entities.enums.ParamName;
+import com.qopuir.taskcontrol.service.ControlScheduleService;
 import com.qopuir.taskcontrol.service.UserService;
 
 public class ProjectionSemanalJob extends QuartzJobBean {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectionSemanalJob.class);
 	
 	private final ControlName controlName = ControlName.PROJECTION_SEMANAL;
-	
-	@Value("${projectionSemanal.simulate}")
-	private Boolean simulate;
-	@Value("${projectionSemanal.url}")
-	private String projectionUrl;
-	@Value("${projectionSemanal.subject}")
-	private String mailSubject;
-	@Value("${projectionSemanal.from}")
-	private String mailFrom;
-	@Value("${projectionSemanal.mailTemplate}")
-	private String mailTemplate;
 	
 	@Autowired
 	private JobLauncher jobLauncher;
@@ -65,12 +56,18 @@ public class ProjectionSemanalJob extends QuartzJobBean {
 	
 	@Autowired
 	UserService userService;
+	@Autowired
+	ControlScheduleService controlScheduleService;
 	
 	@Override
 	protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
 		LocalDateTime executionTime = new LocalDateTime().withMillisOfSecond(0);
 		
-		logger.info("Job {} (schedule {}) running at {}", context.getMergedJobDataMap().getString(PARAM_JOB_NAME), context.getMergedJobDataMap().getLong(PARAM_JOB_SCHEDULE), executionTime);
+		Long controlScheduleId = context.getMergedJobDataMap().getLong(PARAM_JOB_SCHEDULE);
+		
+		logger.info("Job {} (schedule {}) running at {}", context.getMergedJobDataMap().getString(PARAM_JOB_NAME), controlScheduleId, executionTime);
+		
+		Map<ParamName, ControlScheduleParamVO> controlScheduleParams = controlScheduleService.getControlParams(controlName, controlScheduleId);
 		
 		List<UserVO> controlUsers = userService.listControlUsers(controlName);
 		
@@ -79,16 +76,16 @@ public class ProjectionSemanalJob extends QuartzJobBean {
 		for (UserVO userVO : controlUsers) {
 			logger.debug("Checking projection of user {}", userVO.getUsername());
 			
-			if (simulate) {
+			if (Boolean.parseBoolean(controlScheduleParams.get(ParamName.SIMULATE).getValue())) {
 				logger.info("Simulating...");
 				
-				logger.debug("Email would be sent from {} to {} with subject '{}' and template '{}'", mailFrom, userVO.getEmail(), mailSubject, mailTemplate);
+				logger.debug("Email would be sent from {} to {} with subject '{}' and template '{}'", controlScheduleParams.get(ParamName.MAIL_FROM).getValue(), userVO.getEmail(), controlScheduleParams.get(ParamName.MAIL_SUBJECT).getValue(), controlScheduleParams.get(ParamName.MAIL_TEMPLATE).getValue());
 			} else {
-				if (checkProjectionIncompleteUntilToday(userVO)) {
+				if (checkProjectionIncompleteUntilToday(controlScheduleParams.get(ParamName.URL).getValue(), userVO)) {
 					logger.warn("User <{}> has projection incomplete at {}. Sending an email to <{}>", userVO.getUsername(), executionTime, userVO.getEmail());
 					
 					try {
-						Map<String, JobParameter> jobParameters = getMailParameters(mailFrom, userVO.getEmail(), mailSubject, mailTemplate);
+						Map<String, JobParameter> jobParameters = getMailParameters(controlScheduleParams.get(ParamName.MAIL_FROM).getValue(), userVO.getEmail(), controlScheduleParams.get(ParamName.MAIL_SUBJECT).getValue(), controlScheduleParams.get(ParamName.MAIL_TEMPLATE).getValue());
 						jobParameters.put(PARAM_JOB_EXECUTION_TIME, new JobParameter(executionTime.toDate()));
 						
 						jobLauncher.run(jobRegistry.getJob(JOB_SEND_MAIL), new JobParameters(jobParameters));
@@ -104,15 +101,15 @@ public class ProjectionSemanalJob extends QuartzJobBean {
 						logger.error(e.getMessage(), e);
 					}
 					
-					logger.debug("Sent email from {} to {} with subject '{}' and template '{}'", mailFrom, userVO.getEmail(), mailSubject, mailTemplate);
+					logger.debug("Sent email from {} to {} with subject '{}' and template '{}'", controlScheduleParams.get(ParamName.MAIL_FROM).getValue(), userVO.getEmail(), controlScheduleParams.get(ParamName.MAIL_SUBJECT).getValue(), controlScheduleParams.get(ParamName.MAIL_TEMPLATE).getValue());
 				}
 			}
 		}
 	}
 	
-	private boolean checkProjectionIncompleteUntilToday(UserVO userVO) {
+	private boolean checkProjectionIncompleteUntilToday(String url, UserVO userVO) {
 		WebDriver driver = new HtmlUnitDriver();
-        driver.get(projectionUrl);
+        driver.get(url);
 
         Select userField = new Select(driver.findElement(By.cssSelector("select#form_auth_name")));
         userField.selectByVisibleText(userVO.getUsername());
@@ -122,7 +119,7 @@ public class ProjectionSemanalJob extends QuartzJobBean {
         
         element.submit();
 
-        driver.get(projectionUrl + "/?page=home");
+        driver.get(url + "/?page=home");
         
         List<WebElement> incompleteDays = driver.findElements(By.cssSelector("td.calendar-day p.day-number-red"));
 

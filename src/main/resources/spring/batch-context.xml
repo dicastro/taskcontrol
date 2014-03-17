@@ -92,16 +92,6 @@
 		</property>
 	</bean>
 	
-	<bean id="batch-pph" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="IgnoreUnresolvablePlaceholders" value="true" />
-		<property name="locations">
-			<list>
-				<value>classpath:projectionSemanal.properties</value>
-				<value>classpath:projectionMensual.properties</value>
-			</list>
-		</property>
-	</bean>
-	
 	<batch:job id="sendMail" job-repository="jobRepository">
 		<batch:step id="sendMailStep">
 			<batch:tasklet transaction-manager="transactionManager">

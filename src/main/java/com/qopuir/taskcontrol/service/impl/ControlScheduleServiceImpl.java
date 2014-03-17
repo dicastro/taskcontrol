@@ -2,16 +2,24 @@ package com.qopuir.taskcontrol.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.qopuir.taskcontrol.dao.ControlParamDAO;
 import com.qopuir.taskcontrol.dao.ControlScheduleDAO;
+import com.qopuir.taskcontrol.dao.ControlScheduleParamDAO;
+import com.qopuir.taskcontrol.entities.ControlParamVO;
+import com.qopuir.taskcontrol.entities.ControlScheduleParamVO;
 import com.qopuir.taskcontrol.entities.ControlScheduleVO;
+import com.qopuir.taskcontrol.entities.enums.ControlName;
 import com.qopuir.taskcontrol.entities.enums.ControlScheduleAction;
 import com.qopuir.taskcontrol.entities.enums.ControlScheduleStatus;
+import com.qopuir.taskcontrol.entities.enums.ParamName;
 import com.qopuir.taskcontrol.service.ControlScheduleService;
 import com.qopuir.taskcontrol.workflow.ControlScheduleWorkflow;
 
@@ -19,6 +27,10 @@ import com.qopuir.taskcontrol.workflow.ControlScheduleWorkflow;
 public class ControlScheduleServiceImpl implements ControlScheduleService {
 	@Autowired
     ControlScheduleDAO controlScheduleDAO;
+	@Autowired
+    ControlParamDAO controlParamDAO;
+	@Autowired
+    ControlScheduleParamDAO controlScheduleParamDAO;
 	
 	@Autowired
 	ControlScheduleWorkflow controlScheduleWorkflow;
@@ -94,4 +106,23 @@ public class ControlScheduleServiceImpl implements ControlScheduleService {
         
         return result;
     }
+	
+	@Override
+	public Map<ParamName, ControlScheduleParamVO> getControlParams(ControlName controlName, Long controlScheduleId) {
+		Map<ParamName, ControlScheduleParamVO> controlParamsMap = new HashMap<ParamName, ControlScheduleParamVO>();
+
+		List<ControlParamVO> controlParams = controlParamDAO.listControlParams(controlName);
+		
+		for (final ControlParamVO controlParam : controlParams) {
+			controlParamsMap.put(controlParam.getParamName(), new ControlScheduleParamVO().setControlScheduleId(controlScheduleId).setControlName(controlName).setParamName(controlParam.getParamName()).setValue(controlParam.getDefaultValue()));
+		}
+		
+		List<ControlScheduleParamVO> controlScheduleParams = controlScheduleParamDAO.listControlParams(controlScheduleId);
+		
+		for (ControlScheduleParamVO controlScheduleParam : controlScheduleParams) {
+			controlParamsMap.put(controlScheduleParam.getParamName(), controlScheduleParam);
+		}
+		
+		return controlParamsMap;
+	}
 }

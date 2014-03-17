@@ -5,6 +5,6 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ ControlDAOTest.class, ControlScheduleDAOTest.class, ControlUserDAOTest.class, UserDAOTest.class })
+@SuiteClasses({ ControlDAOTest.class, ControlParamDAOTest.class, ControlScheduleDAOTest.class, ControlUserDAOTest.class, UserDAOTest.class })
 public class AllDAOTest {
 }

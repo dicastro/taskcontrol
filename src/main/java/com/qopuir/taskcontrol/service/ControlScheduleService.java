@@ -1,9 +1,13 @@
 package com.qopuir.taskcontrol.service;
 
 import java.util.List;
+import java.util.Map;
 
+import com.qopuir.taskcontrol.entities.ControlScheduleParamVO;
 import com.qopuir.taskcontrol.entities.ControlScheduleVO;
+import com.qopuir.taskcontrol.entities.enums.ControlName;
 import com.qopuir.taskcontrol.entities.enums.ControlScheduleAction;
+import com.qopuir.taskcontrol.entities.enums.ParamName;
 
 public interface ControlScheduleService {
 	/**
@@ -45,4 +49,9 @@ public interface ControlScheduleService {
 	 * Execute an action over a control schedule
 	 */
 	void executeAction(Long controlScheduleId, ControlScheduleAction action);
+	
+	/**
+	 * Get control parameters
+	 */
+	Map<ParamName, ControlScheduleParamVO> getControlParams(ControlName controlName, Long controlScheduleId);
 }

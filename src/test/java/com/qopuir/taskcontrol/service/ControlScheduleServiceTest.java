@@ -4,6 +4,7 @@ import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.Operations.sequenceOf;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -22,13 +23,16 @@ import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.DbSetupTracker;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import com.ninja_squad.dbsetup.operation.Operation;
+import com.qopuir.taskcontrol.common.BooleanBinder;
 import com.qopuir.taskcontrol.common.CommonOperations;
 import com.qopuir.taskcontrol.common.EnumTypeBinder;
 import com.qopuir.taskcontrol.common.LocalDateTimeBinder;
+import com.qopuir.taskcontrol.entities.ControlScheduleParamVO;
 import com.qopuir.taskcontrol.entities.ControlScheduleVO;
 import com.qopuir.taskcontrol.entities.enums.ControlName;
 import com.qopuir.taskcontrol.entities.enums.ControlScheduleAction;
 import com.qopuir.taskcontrol.entities.enums.ControlScheduleStatus;
+import com.qopuir.taskcontrol.entities.enums.ParamName;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:spring/database-context.xml", "classpath:spring/mybatis-context.xml", "classpath:spring/application-context.xml" })
@@ -60,6 +64,21 @@ public class ControlScheduleServiceTest {
 						.row().column("ID", PAUSED_WITHIN_PERIOD).column("START_DATE", new LocalDateTime(2014, 01, 01, 12, 0, 0)).column("END_DATE", new LocalDateTime(2014, 12, 31, 12, 0, 0)).column("CRON", "*/10 * * * * ?").column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("SCHEDULE_STATUS", ControlScheduleStatus.RUNNING).end()
 						.row().column("ID", RUNNING_WITHIN_PERIOD).column("START_DATE", new LocalDateTime(2014, 01, 01, 12, 0, 0)).column("END_DATE", new LocalDateTime(2014, 12, 31, 12, 0, 0)).column("CRON", "*/10 * * * * ?").column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("SCHEDULE_STATUS", ControlScheduleStatus.PAUSED).end()
 						.row().column("ID", FINISHED_AFTER_PERIOD).column("START_DATE", new LocalDateTime(2014, 01, 01, 12, 0, 0)).column("END_DATE", new LocalDateTime().minusDays(1).withHourOfDay(12).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0)).column("CRON", "*/10 * * * * ?").column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("SCHEDULE_STATUS", ControlScheduleStatus.FINISHED).end()
+						.useMetadata(false)
+						.build(),
+				insertInto("CONTROL_PARAMS")
+						.columns("CONTROL_NAME", "PARAM_NAME", "REQUIRED", "DEFAULT_VALUE", "DESCRIPTION")
+						.withBinder(new EnumTypeBinder(), "CONTROL_NAME", "PARAM_NAME")
+						.withBinder(new BooleanBinder(), "REQUIRED")
+						.row().column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("PARAM_NAME", ParamName.MAIL_FROM).column("REQUIRED", Boolean.TRUE).column("DEFAULT_VALUE", "carlos.cordero@sopragroup.com").column("DESCRIPTION", "Contiene la direccion de email del remitente de los emails que se envíen por el control").end()
+						.row().column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("PARAM_NAME", ParamName.MAIL_SUBJECT).column("REQUIRED", Boolean.TRUE).column("DEFAULT_VALUE", "Projection!!!").column("DESCRIPTION", "Contiene el asunto de los de los emails que se envíen por el control").end()
+						.row().column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("PARAM_NAME", ParamName.MAIL_TEMPLATE).column("REQUIRED", Boolean.TRUE).column("DEFAULT_VALUE", null).column("DESCRIPTION", "Contiene la plantilla de los emails que se envíen por el control").end()
+						.useMetadata(false)
+						.build(),
+				insertInto("CONTROL_SCHEDULE_PARAMS")
+						.columns("CONTROL_SCHEDULE_ID", "CONTROL_NAME", "PARAM_NAME", "PARAM_VALUE")
+						.withBinder(new EnumTypeBinder(), "CONTROL_NAME", "PARAM_NAME")
+						.row().column("CONTROL_SCHEDULE_ID", 1L).column("CONTROL_NAME", ControlName.PROJECTION_SEMANAL).column("PARAM_NAME", ParamName.MAIL_FROM).column("PARAM_VALUE", "carlos.cordero@edf.com").end()
 						.useMetadata(false)
 						.build()
 		);
@@ -207,5 +226,17 @@ public class ControlScheduleServiceTest {
 		ControlScheduleVO controlSchedule = controlScheduleService.findById(FINISHED_AFTER_PERIOD);
 		
         Assert.assertEquals(ControlScheduleStatus.FINISHED, controlSchedule.getStatus());
+    }
+	
+	@Test
+	@Transactional
+    public void listControlParams() {
+		dbSetupTracker.skipNextLaunch();
+		
+        Map<ParamName, ControlScheduleParamVO> controlScheduleParams = controlScheduleService.getControlParams(ControlName.PROJECTION_SEMANAL, 1L);
+
+        Assert.assertEquals(3, controlScheduleParams.size());
+        Assert.assertEquals("carlos.cordero@edf.com", controlScheduleParams.get(ParamName.MAIL_FROM).getValue());
+        Assert.assertEquals("Projection!!!", controlScheduleParams.get(ParamName.MAIL_SUBJECT).getValue());
     }
 }

@@ -21,6 +21,11 @@
 		<property name="mapperInterface" value="com.qopuir.taskcontrol.dao.ControlDAO" />
 	</bean>
 	
+	<bean id="controlParamDAO" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+		<property name="mapperInterface" value="com.qopuir.taskcontrol.dao.ControlParamDAO" />
+	</bean>
+	
 	<bean id="controlUserDAO" class="org.mybatis.spring.mapper.MapperFactoryBean">
 		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
 		<property name="mapperInterface" value="com.qopuir.taskcontrol.dao.ControlUserDAO" />
@@ -29,5 +34,10 @@
 	<bean id="controlScheduleDAO" class="org.mybatis.spring.mapper.MapperFactoryBean">
 		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
 		<property name="mapperInterface" value="com.qopuir.taskcontrol.dao.ControlScheduleDAO" />
+	</bean>
+	
+	<bean id="controlScheduleParamDAO" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+		<property name="mapperInterface" value="com.qopuir.taskcontrol.dao.ControlScheduleParamDAO" />
 	</bean>
 </beans>
