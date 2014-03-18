@@ -14,5 +14,4 @@
 	<import resource="classpath:spring/mybatis-context.xml"/>
 	<import resource="classpath:spring/application-context.xml"/>
 	<import resource="classpath:spring/batch-context.xml"/>
-	<import resource="classpath:spring/mvc-context.xml"/>
 </beans>
