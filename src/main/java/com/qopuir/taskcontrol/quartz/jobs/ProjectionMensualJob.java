@@ -1,7 +1,6 @@
 package com.qopuir.taskcontrol.quartz.jobs;
 
 import static com.qopuir.taskcontrol.quartz.constants.JobConstants.JOB_SEND_MAIL;
-import static com.qopuir.taskcontrol.quartz.constants.JobConstants.PARAM_JOB_EXECUTION_TIME;
 import static com.qopuir.taskcontrol.quartz.constants.JobConstants.PARAM_JOB_NAME;
 import static com.qopuir.taskcontrol.quartz.constants.JobConstants.PARAM_JOB_SCHEDULE;
 import static com.qopuir.taskcontrol.quartz.constants.JobConstants.PARAM_MAIL_FROM;
@@ -29,7 +28,6 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import com.qopuir.taskcontrol.entities.ControlScheduleParamVO;
 import com.qopuir.taskcontrol.entities.UserVO;
@@ -38,7 +36,7 @@ import com.qopuir.taskcontrol.entities.enums.ParamName;
 import com.qopuir.taskcontrol.service.ControlScheduleService;
 import com.qopuir.taskcontrol.service.UserService;
 
-public class ProjectionMensualJob extends QuartzJobBean {
+public class ProjectionMensualJob extends TaskControlJobBean {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectionMensualJob.class);
 	
 	private final ControlName controlName = ControlName.PROJECTION_MENSUAL;
@@ -78,7 +76,7 @@ public class ProjectionMensualJob extends QuartzJobBean {
 				
 				try {
 					Map<String, JobParameter> jobParameters = getMailParameters(controlScheduleParams.get(ParamName.MAIL_FROM).getValue(), userVO.getEmail(), controlScheduleParams.get(ParamName.MAIL_SUBJECT).getValue(), controlScheduleParams.get(ParamName.MAIL_TEMPLATE).getValue());
-					jobParameters.put(PARAM_JOB_EXECUTION_TIME, new JobParameter(executionTime.toDate()));
+					addCommonJobParameters(jobParameters, controlName, controlScheduleId, executionTime);
 					
 					jobLauncher.run(jobRegistry.getJob(JOB_SEND_MAIL), new JobParameters(jobParameters));
 				} catch (JobExecutionAlreadyRunningException e) {
