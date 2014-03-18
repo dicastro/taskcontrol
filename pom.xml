@@ -4,7 +4,7 @@
 
 	<groupId>com.qopuir</groupId>
 	<artifactId>taskcontrol</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1.0-RELEASE</version>
 	<packaging>war</packaging>
 
 	<name>Task Control</name>
