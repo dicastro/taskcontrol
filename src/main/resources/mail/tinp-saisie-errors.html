@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:remove="all">tinP</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<table>
+		<thead>
+			<tr>
+				<th>Day</th>
+				<th>Time</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="item : ${mailContext}">
+				<td th:text="${item.date}">Oranges</td>
+				<td th:text="${item.saisie}">0.99</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>

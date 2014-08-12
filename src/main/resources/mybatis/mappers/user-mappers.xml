@@ -23,4 +23,11 @@
 		INNER JOIN TASKCONTROL.USER_CONTROLS AS UC ON UC.USER_USERNAME = U.USERNAME
 		WHERE UC.CONTROL_NAME = #{controlName,typeHandler=com.qopuir.taskcontrol.mybatis.typeHandlers.ControlNameTypeHandler}
 	</select>
+	
+	<select id="getUserByUsername" resultMap="userMap">
+		SELECT U.USERNAME, U.PASSWORD, U.EMAIL
+		FROM TASKCONTROL.USERS AS U
+		WHERE U.USERNAME = #{userName}
+	</select>
+
 </mapper>

@@ -74,8 +74,8 @@
 	<bean id="jobClassFactory" class="com.qopuir.taskcontrol.quartz.jobs.JobClassFactory">
 		<property name="map">
 			<map>
-				<entry key="PROJECTION_SEMANAL" value="com.qopuir.taskcontrol.quartz.jobs.ProjectionSemanalJob" />
 				<entry key="PROJECTION_MENSUAL" value="com.qopuir.taskcontrol.quartz.jobs.ProjectionMensualJob" />
+				<entry key="TINP_SAISIE_ERRORS" value="com.qopuir.taskcontrol.quartz.jobs.TinpSaisieErrorsJob" />
 			</map>
 		</property>
 	</bean>
@@ -99,4 +99,8 @@
 			</batch:tasklet>
 		</batch:step>
 	</batch:job>
+	
+	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate" lazy-init="true" />
+
+	<bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
 </beans>

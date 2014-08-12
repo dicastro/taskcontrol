@@ -19,7 +19,6 @@
 		<h2.version>1.3.175</h2.version>
 		<mysql.version>5.1.29</mysql.version>
 		<slf4j.version>1.7.6</slf4j.version>
-		<selenium.version>2.40.0</selenium.version>
 	</properties>
 
 	<dependencies>
@@ -203,18 +202,6 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
 			<version>4.0</version>
-		</dependency>
-
-		<!-- Selenium -->
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-htmlunit-driver</artifactId>
-			<version>${selenium.version}</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.seleniumhq.selenium</groupId>
-		    <artifactId>selenium-support</artifactId>
-		    <version>${selenium.version}</version>
 		</dependency>
 		
 		<!-- Mail -->

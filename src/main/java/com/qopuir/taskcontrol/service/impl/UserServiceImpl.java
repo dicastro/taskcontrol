@@ -16,10 +16,16 @@ import com.qopuir.taskcontrol.service.UserService;
 @Service
 public class UserServiceImpl implements UserService {
 	@Autowired
-    UserDAO userDAO;
+	UserDAO userDAO;
 	@Autowired
-    ControlUserDAO controlUserDAO;
-	
+	ControlUserDAO controlUserDAO;
+
+	@Override
+	@Transactional
+	public void addControl(String username, ControlName controlName) {
+		controlUserDAO.create(new ControlUserVO().setUserUsername(username).setControlName(controlName));
+	}
+
 	@Override
 	@Transactional
 	public void create(UserVO userVO) {
@@ -28,25 +34,25 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional(readOnly = true)
+	public UserVO getUserByUsername(String userName) {
+		return userDAO.getUserByUsername(userName);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public List<UserVO> list() {
 		return userDAO.list();
 	}
-	
-	@Override
-	@Transactional
-	public void addControl(String username, ControlName controlName) {
-		controlUserDAO.create(new ControlUserVO().setUserUsername(username).setControlName(controlName));
-	}
-	
-	@Override
-	@Transactional
-	public void removeControl(String username, ControlName controlName) {
-        controlUserDAO.remove(new ControlUserVO().setUserUsername(username).setControlName(controlName));
-	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public List<UserVO> listControlUsers(ControlName controlName) {
 		return userDAO.listControlUsers(controlName);
+	}
+
+	@Override
+	@Transactional
+	public void removeControl(String username, ControlName controlName) {
+		controlUserDAO.remove(new ControlUserVO().setUserUsername(username).setControlName(controlName));
 	}
 }
