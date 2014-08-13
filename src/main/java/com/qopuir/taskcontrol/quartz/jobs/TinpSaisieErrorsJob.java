@@ -10,8 +10,10 @@ import static com.qopuir.taskcontrol.quartz.constants.JobConstants.PARAM_MAIL_TE
 import static com.qopuir.taskcontrol.quartz.constants.JobConstants.PARAM_MAIL_TO;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDateTime;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -35,7 +37,6 @@ import com.qopuir.taskcontrol.entities.ControlScheduleParamVO;
 import com.qopuir.taskcontrol.entities.UserVO;
 import com.qopuir.taskcontrol.entities.enums.ControlName;
 import com.qopuir.taskcontrol.entities.enums.ParamName;
-import com.qopuir.taskcontrol.quartz.jobs.rest.SaisieErrorsRestClientJobDataResponse;
 import com.qopuir.taskcontrol.quartz.jobs.rest.SaisieErrorsRestClientJobResponse;
 import com.qopuir.taskcontrol.service.ControlScheduleService;
 import com.qopuir.taskcontrol.service.UserService;
@@ -74,54 +75,62 @@ public class TinpSaisieErrorsJob extends TaskControlJobBean {
 		Map<ParamName, ControlScheduleParamVO> controlScheduleParams = controlScheduleService.getControlParams(
 				controlName, controlScheduleId);
 
-		SaisieErrorsRestClientJobResponse response = restTemplate.getForObject(controlScheduleParams.get(ParamName.URL)
-				.getValue(), SaisieErrorsRestClientJobResponse.class);
+		List<UserVO> controlUsers = userService.listControlUsers(controlName);
 
-		for (SaisieErrorsRestClientJobDataResponse data : response.getData()) {
+		logger.debug("Users under control {}: {}", controlName, StringUtils.join(controlUsers, ","));
 
-			UserVO userVO = userService.getUserByUsername(data.getUsername());
+		for (UserVO userVO : controlUsers) {
 
-			if (Boolean.parseBoolean(controlScheduleParams.get(ParamName.SIMULATE).getValue())) {
-				logger.info("Simulating...");
+			SaisieErrorsRestClientJobResponse response = restTemplate.getForObject(
+					controlScheduleParams.get(ParamName.URL).getValue(), SaisieErrorsRestClientJobResponse.class,
+					userVO.getUsername());
 
-				logger.debug("Email would be sent from {} to {} with subject '{}' and template '{}'",
-						controlScheduleParams.get(ParamName.MAIL_FROM).getValue(), userVO.getEmail(),
-						controlScheduleParams.get(ParamName.MAIL_SUBJECT).getValue(),
-						controlScheduleParams.get(ParamName.MAIL_TEMPLATE).getValue());
-			} else {
+			if (response.getData().get(0).getErrors() != null) {
 
-				logger.warn("User <{}> has tinp wrong at {}. Sending an email to <{}>", userVO.getUsername(),
-						executionTime, userVO.getEmail());
+				if (Boolean.parseBoolean(controlScheduleParams.get(ParamName.SIMULATE).getValue())) {
+					logger.info("Simulating...");
 
-				try {
-					Map<String, JobParameter> jobParameters = getMailParameters(
+					logger.debug("Email would be sent from {} to {} with subject '{}' and template '{}'",
 							controlScheduleParams.get(ParamName.MAIL_FROM).getValue(), userVO.getEmail(),
 							controlScheduleParams.get(ParamName.MAIL_SUBJECT).getValue(),
 							controlScheduleParams.get(ParamName.MAIL_TEMPLATE).getValue());
-					jobParameters.put(PARAM_MAIL_CONTEXT,
-							new JobParameter(objectMapper.writeValueAsString(data.getErrors())));
-					addCommonJobParameters(jobParameters, controlName, controlScheduleId, executionTime);
+				} else {
 
-					jobLauncher.run(jobRegistry.getJob(JOB_SEND_MAIL), new JobParameters(jobParameters));
-				} catch (JobExecutionAlreadyRunningException e) {
-					logger.error(e.getMessage(), e);
-				} catch (JobRestartException e) {
-					logger.error(e.getMessage(), e);
-				} catch (JobInstanceAlreadyCompleteException e) {
-					logger.error(e.getMessage(), e);
-				} catch (JobParametersInvalidException e) {
-					logger.error(e.getMessage(), e);
-				} catch (NoSuchJobException e) {
-					logger.error(e.getMessage(), e);
-				} catch (JsonProcessingException e) {
-					logger.error(e.getMessage(), e);
+					logger.warn("User <{}> has tinp wrong at {}. Sending an email to <{}>", userVO.getUsername(),
+							executionTime, userVO.getEmail());
+
+					try {
+						Map<String, JobParameter> jobParameters = getMailParameters(
+								controlScheduleParams.get(ParamName.MAIL_FROM).getValue(), userVO.getEmail(),
+								controlScheduleParams.get(ParamName.MAIL_SUBJECT).getValue(), controlScheduleParams
+										.get(ParamName.MAIL_TEMPLATE).getValue());
+						jobParameters
+								.put(PARAM_MAIL_CONTEXT,
+										new JobParameter(objectMapper.writeValueAsString(response.getData().get(0)
+												.getErrors())));
+						addCommonJobParameters(jobParameters, controlName, controlScheduleId, executionTime);
+
+						jobLauncher.run(jobRegistry.getJob(JOB_SEND_MAIL), new JobParameters(jobParameters));
+					} catch (JobExecutionAlreadyRunningException e) {
+						logger.error(e.getMessage(), e);
+					} catch (JobRestartException e) {
+						logger.error(e.getMessage(), e);
+					} catch (JobInstanceAlreadyCompleteException e) {
+						logger.error(e.getMessage(), e);
+					} catch (JobParametersInvalidException e) {
+						logger.error(e.getMessage(), e);
+					} catch (NoSuchJobException e) {
+						logger.error(e.getMessage(), e);
+					} catch (JsonProcessingException e) {
+						logger.error(e.getMessage(), e);
+					}
+
+					logger.debug("Sent email from {} to {} with subject '{}' and template '{}'", controlScheduleParams
+							.get(ParamName.MAIL_FROM).getValue(), userVO.getEmail(),
+							controlScheduleParams.get(ParamName.MAIL_SUBJECT).getValue(),
+							controlScheduleParams.get(ParamName.MAIL_TEMPLATE).getValue());
+
 				}
-
-				logger.debug("Sent email from {} to {} with subject '{}' and template '{}'",
-						controlScheduleParams.get(ParamName.MAIL_FROM).getValue(), userVO.getEmail(),
-						controlScheduleParams.get(ParamName.MAIL_SUBJECT).getValue(),
-						controlScheduleParams.get(ParamName.MAIL_TEMPLATE).getValue());
-
 			}
 		}
 	}
